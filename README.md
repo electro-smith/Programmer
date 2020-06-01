@@ -11,6 +11,6 @@ The programmer can programmer user-uploaded binary files or select from a pre-co
 
 To use the programmer, go to this page:
 
-electro-smith.github.io/Programmer/dfu-util
+electro-smith.github.io/Programmer/dfu-util/index.html
 
 and follow the on-page instructions.

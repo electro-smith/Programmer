@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<link rel="stylesheet" href="./bootstrap.min.css">
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="../sakura.css" />
@@ -60,15 +61,9 @@
           <label for="dfuseUploadSize">DfuSe Upload Size:</label>
           <input type="number" name="dfuseUploadSize" id="dfuseUploadSize" min="1"/>
         </div>
-      
         <legend>DFU mode</legend>
         <fieldset>
-          <legend>Firmware Download (write to USB device)</legend>
-          <p>
-            <select id="selectBinary">
-                <option>Choose a Pre-compiled example</option>
-            </select>
-          </p>
+          <legend>Program the Daisy with your own binary</legend>
           <p>
             <input type="file" id="firmwareFile" name="file" disabled="true"/>
           </p>
@@ -78,7 +73,21 @@
           <div class="log" id="downloadLog"></div>
         </fieldset>
         <fieldset>
-          <legend>Firmware Upload (read from USB device)</legend>
+          <legend>Program the Daisy from a Precompiled Binary</legend>
+          <p>
+            <select id="selectHardwarePlatform" disabled=false>
+                <option>Choose a platform</option>
+            </select>
+            <select id="selectBinary" disabled=true>
+              <option>Choose a Pre-compiled example</option>
+            </select>
+          </p>
+          <p>
+            <button id="download" disabled="true">Download</button>
+          </p>
+        </fieldset>
+        <fieldset>
+          <legend>Read the Binary from Daisy (saves as a .bin file in your downloads)</legend>
           <p>
             <button id="upload" disabled="true">Upload</button>
           </p>
@@ -86,18 +95,46 @@
         </fieldset>
       </form>
     </fieldset>
+    <h2>Usage:</h2>
+    <ol>
+        <li><p>Connect the Daisy to the Computer</p></li>
+        <li><p>Enter the system bootloader by holding the BOOT button down, and then pressing, and releasing the RESET button.</p></li>
+        <li><p>Click the Connect button at the top of the page.</p></li>
+        <li><p>Select, "DFU in FS Mode"</p></li>
+        <li><p>Select the "@Internal Flash" option from the dialog.</p></li>
+        <li><p>Click the Choose File button, and select the .bin file you'd like to flash. This can be found in a projects "build" folder.</p></li>
+        <li><p>Click Download, and wait for the progress bar to finish.</p></li>
+        <li><p>Upon completion there is an error. This can be ignored, and will be removed in future versions of this utility.</p></li>
+        <li><p>Now, pressing RESET on the Daisy will cause the program to start running.</p></li>
+    </ol>
+    <p>
+        On windows, you may have to update the driver to libusb.
+
+        To do this, you can download the free software, Zadig. Instructions for this can be found on the DaisyWiki in the Windows toolchain instructions page.
+    </p>
     <h1>About</h1>
     <p>
         This is a programming interface for the Daisy Platform.
     </p>
     <p>
-        Either Choose a file from your own computer, or select from a list of precompiled programs.
+        So long as the Daisy is using the system-bootloader (accessed by holding BOOT and pressing RESET 
+        -- BOOT can be released once RESET has been released) the Daisy will show up as "DFU in FS Mode"
     </p>
+    <p> Features to come: </p>
+    <ul>
+        <li><p>Platform->Program selection for selecting precompiled firmware for many Daisy Platforms</p></li>
+        <li><p>Not having to press reset at the end of the programming<p></li>
+        <li><p>Better connection status (not having to select internal flash vs option bytes, etc.</p></li>
+        <li><p>Custom Bootloader that will allow access to external FLASH, etc.</p></li>
+    </ul>
     <h1>Prerequisites</h1>
-    <p>In order to use this, you will need:
+    <p>In order to use this, you will need:</p>
     <ul>
       <li>
         <p>An up-to-date version of Chrome, at least version 61 or newer</p>
+      </li>
+      <li>
+        <p>A Daisy Seed SOM. (The user-uploaded binary will work for any STM32 chip with a built in DFU bootloader).
       </li>
     <ul>
   </body>

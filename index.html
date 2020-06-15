@@ -1,141 +1,17 @@
 <!DOCTYPE html>
-<link rel="icon" href="./ES_Circle_Orange.PNG"
+<link rel="icon" href="./img/ES_Circle_Orange.PNG"></link>
 <html>
-  <head>
-    <title>Daisy Programmer</title>
-    <script src="dfu.js"></script>
-    <script src="dfuse.js"></script>
-    <script src="FileSaver.js"></script>
-    <script src="dfu-util.js"></script>
-    <style>
-      p.warning {
-        color: red;
-      }
-      p.error {
-        color: red;
-        font-weight: bold;
-      }
-      label.radio {
-        display: inline;
-      }
-      input:invalid {
-        color:red;
-      }
-    </style>
-  </head>
-  <body>
-    <p>
-      <span id="status"></span>
-    </p>
-    <p>
-      <label hidden="true" for="vid">Vendor ID (hex):</label>
-      <input hidden="true" list="vendor_ids" type="text" name="vid" id="vid" maxlength="6" size="8" pattern="0x[A-Fa-f0-9]{1,4}"/>
-      <datalist id="vendor_ids">
-      </datalist>
-    </p>
-    <p>
-      <button id="connect">Connect</button>
-    </p>
-    <dialog id="interfaceDialog">
-      Your device has multiple DFU interfaces. Select one from the list below:
-      <form id="interfaceForm" method="dialog">
-        <button id="selectInterface" type="submit">Select interface</button>
-      </form>
-    </dialog>
-    <p>
-      <div id="usbInfo" style="white-space: pre"></div>
-      <div id="dfuInfo" style="white-space: pre"></div>
-    </p>
-    <fieldset>
-      <legend>Runtime mode</legend>
-      <button id="detach" disabled="true">Detach DFU</button>
-    </fieldset>
-    <fieldset>
-      <form id="configForm">
-        <label for="transferSize">Transfer Size:</label>
-        <input type="number" name="transferSize" id="transferSize" value="1024"/>
-        <div id="dfuseFields" hidden="true">
-          <label for="dfuseStartAddress">DfuSe Start Address:</label>
-          <input type="text" name="dfuseStartAddress" id="dfuseStartAddress" title="Initial memory address to read/write from (hex)" size="10" pattern="0x[A-Fa-f0-9]+"/>
-          <label for="dfuseUploadSize">DfuSe Upload Size:</label>
-          <input type="number" name="dfuseUploadSize" id="dfuseUploadSize" min="1"/>
+    <head>
+        <title>Electrosmith USB Programmer</title>
+	    <script src="dfu/dfu.js"></script>
+	    <script src="dfu/dfuse.js"></script>
+	    <script src="dfu/FileSaver.js"></script>
+    	<script src="app/dfu-util.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    </head>
+    <body>
+        <div id="app">
         </div>
-        <legend>DFU mode</legend>
-        <fieldset>
-          <legend>Program the Daisy with your own binary</legend>
-          <p>
-            <input type="file" id="firmwareFile" name="file" disabled="true"/>
-          </p>
-          <p>
-            <button id="download" disabled="true">Download</button>
-          </p>
-          <div class="log" id="downloadLog"></div>
-        </fieldset>
-        <fieldset>
-          <legend>Program the Daisy from a Precompiled Binary</legend>
-          <p>
-            <select id="selectHardwarePlatform" disabled=false>
-                <option>Choose a platform</option>
-            </select>
-            <select id="selectBinary" disabled=true>
-              <option>Choose a Pre-compiled example</option>
-            </select>
-          </p>
-          <p>
-            <button id="download" disabled="true">Download</button>
-          </p>
-        </fieldset>
-        <fieldset>
-          <legend>Read the Binary from Daisy (saves as a .bin file in your downloads)</legend>
-          <p>
-            <button id="upload" disabled="true">Upload</button>
-          </p>
-          <div class="log" id="uploadLog"></div>
-        </fieldset>
-      </form>
-    </fieldset>
-    <h2>Usage:</h2>
-    <ol>
-        <li><p>Connect the Daisy to the Computer</p></li>
-        <li><p>Enter the system bootloader by holding the BOOT button down, and then pressing, and releasing the RESET button.</p></li>
-        <li><p>Click the Connect button at the top of the page.</p></li>
-        <li><p>Select, "DFU in FS Mode"</p></li>
-        <li><p>Select the "@Internal Flash" option from the dialog.</p></li>
-        <li><p>Click the Choose File button, and select the .bin file you'd like to flash. This can be found in a projects "build" folder.</p></li>
-        <li><p>Click Download, and wait for the progress bar to finish.</p></li>
-        <li><p>Upon completion there is an error. This can be ignored, and will be removed in future versions of this utility.</p></li>
-        <li><p>Now, pressing RESET on the Daisy will cause the program to start running.</p></li>
-    </ol>
-    <p>
-        On windows, you may have to update the driver to libusb.
-
-        To do this, you can download the free software, Zadig. Instructions for this can be found on the DaisyWiki in the Windows toolchain instructions page.
-    </p>
-    <h1>About</h1>
-    <p>
-        This is a programming interface for the Daisy Platform.
-    </p>
-    <p>
-        So long as the Daisy is using the system-bootloader (accessed by holding BOOT and pressing RESET 
-        -- BOOT can be released once RESET has been released) the Daisy will show up as "DFU in FS Mode"
-    </p>
-    <p> Features to come: </p>
-    <ul>
-        <li><p>Platform->Program selection for selecting precompiled firmware for many Daisy Platforms</p></li>
-        <li><p>Not having to press reset at the end of the programming<p></li>
-        <li><p>Better connection status (not having to select internal flash vs option bytes, etc.</p></li>
-        <li><p>Custom Bootloader that will allow access to external FLASH, etc.</p></li>
-    </ul>
-    <h1>Prerequisites</h1>
-    <p>In order to use this, you will need:</p>
-    <ul>
-      <li>
-        <p>An up-to-date version of Chrome, at least version 61 or newer</p>
-      </li>
-      <li>
-        <p>A Daisy Seed SOM. (The user-uploaded binary will work for any STM32 chip with a built in DFU bootloader).
-      </li>
-    <ul>
-  </body>
-<script src="dropdown.js"></script>
+        <script src="./app/app.js"></script>
+    </body>
 </html>

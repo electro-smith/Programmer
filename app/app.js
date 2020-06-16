@@ -58,16 +58,48 @@ var app = new Vue({
     template: 
     `
     <div>
+    <button id="detach" disabled="true" hidden="true">Detach DFU</button>
+    <button id="upload" disabled="true" hidden="true">Upload</button>
+
     <h1>Electrosmith Programmer for Daisy</h1>
     <p>USB Programmer for Firmware updates on Daisy product line.</p>
+
+    <form id="configForm">
+    <p> <label for="transferSize"  hidden="true">Transfer Size:</label>
+    <input type="number" name="transferSize"  hidden="true" id="transferSize" value="1024"></input> </p>
+    <p> <span id="status"></span> </p>
+
+    <p><label hidden="true" for="vid">Vendor ID (hex):</label>
+    <input hidden="true" list="vendor_ids" type="text" name="vid" id="vid" maxlength="6" size="8" pattern="0x[A-Fa-f0-9]{1,4}">
+    <datalist id="vendor_ids"> </datalist> </p>
+
+    <div id="dfuseFields" hidden="true">
+          <label for="dfuseStartAddress" hidden="true">DfuSe Start Address:</label>
+          <input type="text" name="dfuseStartAddress" id="dfuseStartAddress"  hidden="true" title="Initial memory address to read/write from (hex)" size="10" pattern="0x[A-Fa-f0-9]+">
+          <label for="dfuseUploadSize" hidden="true">DfuSe Upload Size:</label>
+          <input type="number" name="dfuseUploadSize" id="dfuseUploadSize" min="1" max="2097152" hidden="true">
+    </div>
+</form>
+
     <p> Connect to the Daisy - Follow the steps in Usage section below </p>
     <button id="connect"> Connect</button>
     <br/>
+
+    <dialog id="interfaceDialog">
+      Your device has multiple DFU interfaces. Select one from the list below:
+      <form id="interfaceForm" method="dialog">
+        <button id="selectInterface" type="submit">Select interface</button>
+      </form>
+    </dialog>
+
+    <div id="usbInfo" hidden="true" style="white-space: pre"></div>
+    <div id="dfuInfo"  hidden="true" style="white-space: pre"></div>
+
     <p> Select a platform and a program from the menu below.</p>
-    <select v-model="sel_platform" textContent="Select a platform">
+    <select v-model="sel_platform" textContent="Select a platform" disabled="true" id="platformSelector">
         <option v-for="platform in platforms" :value="platform">{{platform}}</option>
     </select>
-    <select v-model="sel_example" required @change="programChanged">
+    <select v-model="sel_example" id="firmwareSelector" disabled="true" required @change="programChanged">
         <option v-for="example in platformExamples" :value="example">{{example.name}}</option>
     </select>
     <br/>

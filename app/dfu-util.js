@@ -192,12 +192,12 @@ var device = null;
     }
 
     function logError(msg) {
-        if (logContext) {
-            let error = document.createElement("p");
-            error.className = "error";
-            error.textContent = msg;
-            logContext.appendChild(error);
-        }
+//        if (logContext) {
+  //          let error = document.createElement("p");
+    //        error.className = "error";
+      //      error.textContent = msg;
+        //    logContext.appendChild(error);
+        //}
     }
 
     function logProgress(done, total) {
@@ -272,6 +272,9 @@ var device = null;
         let firmwareFileField = document.querySelector("#firmwareFile");
         let firmwareFile = null;
 
+	let firmwareSelectorField = document.querySelector("#firmwareSelector");
+	let platformSelectorField = document.querySelector("#platformSelector");
+	
         let downloadLog = document.querySelector("#downloadLog");
         let uploadLog = document.querySelector("#uploadLog");
 
@@ -291,6 +294,8 @@ var device = null;
             uploadButton.disabled = true;
             downloadButton.disabled = true;
             firmwareFileField.disabled = true;
+	    platformSelectorField.disabled = true;
+	    firmwareSelectorField.disabled = true;
         }
 
         function onUnexpectedDisconnect(event) {
@@ -385,11 +390,11 @@ var device = null;
             // Display basic USB information
             statusDisplay.textContent = '';
             connectButton.textContent = 'Disconnect';
-            infoDisplay.textContent = (
-                "Name: " + device.device_.productName + "\n" +
-                "MFG: " + device.device_.manufacturerName + "\n" +
-                "Serial: " + device.device_.serialNumber + "\n"
-            );
+            infoDisplay.textContent = ("");
+                //"Name: " + device.device_.productName + "\n" +
+                //"MFG: " + device.device_.manufacturerName + "\n" +
+                //"Serial: " + device.device_.serialNumber + "\n"
+            //);
 
             // Display basic dfu-util style info
             dfuDisplay.textContent = formatDFUSummary(device) + "\n" + memorySummary;
@@ -401,17 +406,21 @@ var device = null;
                 uploadButton.disabled = true;
                 downloadButton.disabled = true;
                 firmwareFileField.disabled = true;
-            } else {
+		platformSelectorField.disabled = true;
+		firmwareSelectorField.disabled = true;
+	    } else {
                 // DFU
                 detachButton.disabled = true;
                 uploadButton.disabled = false;
                 downloadButton.disabled = false;
                 firmwareFileField.disabled = false;
+		platformSelectorField.disabled = false;
+		firmwareSelectorField.disabled = false;
             }
 
             if (device.memoryInfo) {
                 let dfuseFieldsDiv = document.querySelector("#dfuseFields")
-                dfuseFieldsDiv.hidden = false;
+                dfuseFieldsDiv.hidden = true;
                 dfuseStartAddressField.disabled = false;
                 dfuseUploadSizeField.disabled = false;
                 let segment = device.getFirstWritableSegment();
@@ -617,6 +626,18 @@ var device = null;
             }
         });
 
+	firmwareSelectorField.addEventListener("change", (event) => {
+            firmwareFile = null;
+            if (true) {
+                let file = event.target.value;
+                let reader = new FileReader();
+                reader.onload = function() {
+                    firmwareFile = reader.result;
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+	
         downloadButton.addEventListener('click', async function(event) {
             event.preventDefault();
             event.stopPropagation();

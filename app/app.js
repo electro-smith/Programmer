@@ -96,10 +96,10 @@ var app = new Vue({
     <div id="dfuInfo"  hidden="true" style="white-space: pre"></div>
 
     <p> Select a platform and a program from the menu below.</p>
-    <select v-model="sel_platform" textContent="Select a platform" disabled="true" id="platformSelector">
+    <select v-model="sel_platform" textContent="Select a platform" id="platformSelector">
         <option v-for="platform in platforms" :value="platform">{{platform}}</option>
     </select>
-    <select v-model="sel_example" id="firmwareSelector" disabled="true" required @change="programChanged">
+    <select v-model="sel_example" id="firmwareSelector" required @change="programChanged">
         <option v-for="example in platformExamples" :value="example">{{example.name}}</option>
     </select>
     <br/>
@@ -125,10 +125,15 @@ var app = new Vue({
         <li><p>Click the Connect button at the top of the page.</p></li>
         <li><p>Select, "DFU in FS Mode"</p></li>
         <li><p>Select the "@Internal Flash" option from the dialog.</p></li>
-        <li><p>Click the Choose File button, and select the .bin file you would like to flash. This can be found in a projects "build" folder.</p></li>
-        <li><p>Click Download, and wait for the progress bar to finish.</p></li>
-        <li><p>Upon completion there is an error. This can be ignored, and will be removed in future versions of this utility.</p></li>
-        <li><p>Now, pressing RESET on the Daisy will cause the program to start running.</p></li>
+        <li>
+            <p>Now do either of the following:</p>
+            <ul>
+                <li><p>Select a platform and an example from the drop down menu (descriptions, diagrams, etc. coming soon)</p></li>
+                <li><p>Click the Choose File button, and select the .bin file you would like to flash. This can be found in a projects "build" folder.</p></li>
+            </ul>
+        </li>
+        <li><p>Click Program, and wait for the progress bar to finish.</p></li>
+        <li><p>Now, if the program does not start immediatley, pressing RESET on the Daisy will cause the program to start running.</p></li>
     </ol>
     <p>
         On windows, you may have to update the driver to libusb.
@@ -145,7 +150,6 @@ var app = new Vue({
     </p>
     <p> Features to come: </p>
     <ul>
-        <li><p>Platform->Program selection for selecting precompiled firmware for many Daisy Platforms</p></li>
         <li><p>Not having to press reset at the end of the programming</p></li>
         <li><p>Better connection status (not having to select internal flash vs option bytes, etc.</p></li>
         <li><p>Custom Bootloader that will allow access to external FLASH, etc.</p></li>
@@ -193,7 +197,7 @@ var app = new Vue({
         	// Read new file
         	readServerFirmwareFile(self.sel_example.filepath)
         	setTimeout(function(){
-        		fimrwareFile = buffer
+        		firmwareFile = buffer
         	}, 500)
         }
     }

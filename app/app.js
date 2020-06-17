@@ -124,7 +124,6 @@ var app = new Vue({
         <li><p>Enter the system bootloader by holding the BOOT button down, and then pressing, and releasing the RESET button.</p></li>
         <li><p>Click the Connect button at the top of the page.</p></li>
         <li><p>Select, "DFU in FS Mode"</p></li>
-        <li><p>Select the "@Internal Flash" option from the dialog.</p></li>
         <li>
             <p>Now do either of the following:</p>
             <ul>

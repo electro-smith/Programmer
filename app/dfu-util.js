@@ -522,21 +522,16 @@ var device = null;
                             device = await connect(new dfu.Device(selectedDevice, interfaces[0]));
                         } else {
                             await fixInterfaceNames(selectedDevice, interfaces);
-                            populateInterfaceList(interfaceForm, selectedDevice, interfaces);
                             async function connectToSelectedInterface() {
-                                interfaceForm.removeEventListener('submit', this);
-                                const index = interfaceForm.elements["interfaceIndex"].value;
-                                device = await connect(new dfu.Device(selectedDevice, interfaces[index]));
+                                let filteredInterfaceList = interfaces.filter(ifc => ifc.name.includes("0x08000000"))
+                                if (filteredInterfaceList.length === 0) {
+                                    console.log("No interace with flash address 0x08000000 found.")
+                                    statusDisplay.textContent = "The selected device does not have a Flash Memory sectiona at address 0x08000000.";
+                                } else {
+                                    device = await connect(new dfu.Device(selectedDevice,filteredInterfaceList[0]));
+                                }
                             }
-
-                            interfaceForm.addEventListener('submit', connectToSelectedInterface);
-
-                            interfaceDialog.addEventListener('cancel', function () {
-                                interfaceDialog.removeEventListener('cancel', this);
-                                interfaceForm.removeEventListener('submit', connectToSelectedInterface);
-                            });
-
-                            interfaceDialog.showModal();
+                            await connectToSelectedInterface();
                         }
                     }
                 ).catch(error => {

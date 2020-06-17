@@ -1,5 +1,5 @@
 // Generic Strings
-
+const root_url = "https://electro-smith.github.io/Programmer"
 
 // Global Data
 var dummy_example = {
@@ -20,12 +20,19 @@ var data = {
 // Global Buffer for reading files
 var buffer
 
-// Reads examples.json providing the data for all precompiled examples
-function gatherExampleData()
+// Gets the root url
+// should be https://localhost:9001/Programmer on local
+// and https://electro-smith.github.io/Programmer on gh-pages
+function getRootUrl() {
+    var url = document.URL;
+    return url;
+}
+
+// Reads the specified file containing JSON example meta-data
+function gatherExampleData(fpath)
 {
     var raw = new XMLHttpRequest();
-    var fname = '../bin/examples.json';
-    raw.open("GET", fname, true);
+    raw.open("GET", fpath, true);
     raw.responseType = "text"
     raw.onreadystatechange = function ()
     {
@@ -173,10 +180,11 @@ var app = new Vue({
     mounted() {
         var self = this
         console.log("Mounted Page")
-        gatherExampleData()
+        var fpath = getRootUrl().concat("bin/examples.json");
+        gatherExampleData(fpath)
         setTimeout(function(){
             self.importExamples(buffer)
-        }, 250)
+        }, 1000)
             
     },
     methods: {

@@ -14,3 +14,14 @@ To use the programmer, go to this page:
 electro-smith.github.io/Programmer/dfu-util/index.html
 
 and follow the on-page instructions.
+
+## Local Test
+
+To set this app up on a local network, you can use the util/ folder resources.
+
+a run.sh script is included in the root level of the repo. 
+
+However, it is recommended that you run this script from one level outside of the Programmer folder so that the URL patterns are the same as when deployed on electro-smith.github.io
+
+The run script will start the server at `https://localhost:9001/`
+

@@ -80,44 +80,45 @@ var app = new Vue({
           <input type="number" name="dfuseUploadSize" id="dfuseUploadSize" min="1" max="2097152" hidden="true">
     </div>
 </form>
-
-    <p> Connect to the Daisy - Follow the steps in Usage section below </p>
-    <button id="connect"> Connect</button>
+    <fieldset>
+        <legend>Usb Programmer</legend>
+        <p> Connect to the Daisy - Follow the steps in Usage section below </p>
+        <p><button id="connect"> Connect</button></p>
+        <dialog id="interfaceDialog">
+        Your device has multiple DFU interfaces. Select one from the list below:
+        <form id="interfaceForm" method="dialog">
+            <button id="selectInterface" type="submit">Select interface</button>
+        </form>
+        </dialog>
+        <div id="usbInfo" hidden="true" style="white-space: pre"></div>
+        <div id="dfuInfo"  hidden="true" style="white-space: pre"></div>
+        <fieldset>
+            <legend> Select a platform and a program from the menu below.</legend>
+            <select v-model="sel_platform" textContent="Select a platform" id="platformSelector">
+                <option v-for="platform in platforms" :value="platform">{{platform}}</option>
+            </select>
+            <select v-model="sel_example" id="firmwareSelector" required @change="programChanged">
+                <option v-for="example in platformExamples" :value="example">{{example.name}}</option>
+            </select>
+        </fieldset>
+        <p>OR</p>
+        <fieldset>
+            <legend> Select a file from your computer</legend>
+            <p>
+                <input type="file" id="firmwareFile" name="file" disabled="true"/>
+            </p>
+        </fieldset>
+        <p> Ready to program: </p>
+        <ul> 
+            <li>Name: {{sel_example.name}}</li>
+            <li>Description: {{sel_example.description}}</li>
+            <li>File Location: {{sel_example.filepath}} </li>
+        </ul>
+        <button id="download" :disabled="!sel_platform || !sel_example || no_device"> Program</button>
+        <div class="log" id="downloadLog"></div>
+    </fieldset>
     <br/>
 
-    <dialog id="interfaceDialog">
-      Your device has multiple DFU interfaces. Select one from the list below:
-      <form id="interfaceForm" method="dialog">
-        <button id="selectInterface" type="submit">Select interface</button>
-      </form>
-    </dialog>
-
-    <div id="usbInfo" hidden="true" style="white-space: pre"></div>
-    <div id="dfuInfo"  hidden="true" style="white-space: pre"></div>
-
-    <p> Select a platform and a program from the menu below.</p>
-    <select v-model="sel_platform" textContent="Select a platform" id="platformSelector">
-        <option v-for="platform in platforms" :value="platform">{{platform}}</option>
-    </select>
-    <select v-model="sel_example" id="firmwareSelector" required @change="programChanged">
-        <option v-for="example in platformExamples" :value="example">{{example.name}}</option>
-    </select>
-    <br/>
-    <p> Or Select a file from your computer</p>
-    <p>
-        <input type="file" id="firmwareFile" name="file" disabled="true"/>
-    </p>
-
-    <br/>
-    <button id="download" :disabled="!sel_platform || !sel_example || no_device"> Program</button>
-    <div class="log" id="downloadLog"></div>
-    <br/>
-    <p> Ready to program: </p>
-    <ul> 
-        <li>Name: {{sel_example.name}}</li>
-        <li>Description: {{sel_example.description}}</li>
-        <li>File Location: {{sel_example.filepath}} </li>
-    </ul>
     <h2>Usage:</h2>
     <ol>
         <li><p>Connect the Daisy to the Computer</p></li>

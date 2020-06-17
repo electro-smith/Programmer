@@ -147,12 +147,6 @@ var app = new Vue({
         So long as the Daisy is using the system-bootloader (accessed by holding BOOT and pressing RESET 
         -- BOOT can be released once RESET has been released) the Daisy will show up as "DFU in FS Mode"
     </p>
-    <p> Features to come: </p>
-    <ul>
-        <li><p>Not having to press reset at the end of the programming</p></li>
-        <li><p>Better connection status (not having to select internal flash vs option bytes, etc.</p></li>
-        <li><p>Custom Bootloader that will allow access to external FLASH, etc.</p></li>
-    </ul>
     <h1>Prerequisites</h1>
     <p>In order to use this, you will need:</p>
     <ul>

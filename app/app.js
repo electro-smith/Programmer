@@ -1,20 +1,14 @@
 // Generic Strings
 const root_url = "https://electro-smith.github.io/Programmer"
 
-// Global Data
-var dummy_example = {
-    name: "Dummy Example",
-    description: "This is a dummy program for initialization.",
-    platform: "N/A",
-    filepath: "./bin/dummypath.bin"
-}
-
 var data = { 
     platforms: [],
     examples: [],
     no_device: true,
     sel_platform: null,
-    sel_example: dummy_example,
+    sel_example: null,
+    firmwareFile: null,
+    firmwareFileName: null
 }
 
 // Global Buffer for reading files
@@ -64,108 +58,152 @@ var app = new Vue({
     el: '#app',
     template: 
     `
-    <div>
-    <button id="detach" disabled="true" hidden="true">Detach DFU</button>
-    <button id="upload" disabled="true" hidden="true">Upload</button>
+    <b-container class="app_body">
+    <b-row align="center" class="app_column">
+        <div align="center">
+            <button id="detach" disabled="true" hidden="true">Detach DFU</button>
+            <button id="upload" disabled="true" hidden="true">Upload</button>
 
-    <h1>Electrosmith Programmer for Daisy</h1>
-    <p>USB Programmer for Firmware updates on Daisy product line.</p>
+            <h1>Electrosmith Programmer for Daisy</h1>
+            <br/>
+            <p>USB Programmer for Firmware updates on Daisy product line.</p>
 
-    <form id="configForm">
-    <p> <label for="transferSize"  hidden="true">Transfer Size:</label>
-    <input type="number" name="transferSize"  hidden="true" id="transferSize" value="1024"></input> </p>
-    <p> <span id="status"></span> </p>
+            <b-form id="configForm">
+                <p> <label for="transferSize"  hidden="true">Transfer Size:</label>
+                <input type="number" name="transferSize"  hidden="true" id="transferSize" value="1024"></input> </p>
+                <p> <span id="status"></span> </p>
 
-    <p><label hidden="true" for="vid">Vendor ID (hex):</label>
-    <input hidden="true" list="vendor_ids" type="text" name="vid" id="vid" maxlength="6" size="8" pattern="0x[A-Fa-f0-9]{1,4}">
-    <datalist id="vendor_ids"> </datalist> </p>
+                <p><label hidden="true" for="vid">Vendor ID (hex):</label>
+                <input hidden="true" list="vendor_ids" type="text" name="vid" id="vid" maxlength="6" size="8" pattern="0x[A-Fa-f0-9]{1,4}">
+                <datalist id="vendor_ids"> </datalist> </p>
 
-    <div id="dfuseFields" hidden="true">
-          <label for="dfuseStartAddress" hidden="true">DfuSe Start Address:</label>
-          <input type="text" name="dfuseStartAddress" id="dfuseStartAddress"  hidden="true" title="Initial memory address to read/write from (hex)" size="10" pattern="0x[A-Fa-f0-9]+">
-          <label for="dfuseUploadSize" hidden="true">DfuSe Upload Size:</label>
-          <input type="number" name="dfuseUploadSize" id="dfuseUploadSize" min="1" max="2097152" hidden="true">
-    </div>
-</form>
-    <fieldset>
-        <legend>Usb Programmer</legend>
-        <p> Connect to the Daisy - Follow the steps in Usage section below </p>
-        <p><button id="connect"> Connect</button></p>
-        <dialog id="interfaceDialog">
-        Your device has multiple DFU interfaces. Select one from the list below:
-        <form id="interfaceForm" method="dialog">
-            <button id="selectInterface" type="submit">Select interface</button>
-        </form>
-        </dialog>
-        <div id="usbInfo" hidden="true" style="white-space: pre"></div>
-        <div id="dfuInfo"  hidden="true" style="white-space: pre"></div>
-        <fieldset>
-            <legend> Select a platform and a program from the menu below.</legend>
-            <select v-model="sel_platform" textContent="Select a platform" id="platformSelector">
-                <option v-for="platform in platforms" :value="platform">{{platform}}</option>
-            </select>
-            <select v-model="sel_example" id="firmwareSelector" required @change="programChanged">
-                <option v-for="example in platformExamples" :value="example">{{example.name}}</option>
-            </select>
-        </fieldset>
-        <p>OR</p>
-        <fieldset>
-            <legend> Select a file from your computer</legend>
-            <p>
-                <input type="file" id="firmwareFile" name="file" disabled="true"/>
-            </p>
-        </fieldset>
-        <p> Ready to program: </p>
-        <ul> 
-            <li>Name: {{sel_example.name}}</li>
-            <li>Description: {{sel_example.description}}</li>
-            <li>File Location: {{sel_example.filepath}} </li>
-        </ul>
-        <button id="download" :disabled="!sel_platform || !sel_example || no_device"> Program</button>
-        <div class="log" id="downloadLog"></div>
-    </fieldset>
+                <div id="dfuseFields" hidden="true">
+                    <label for="dfuseStartAddress" hidden="true">DfuSe Start Address:</label>
+                    <input type="text" name="dfuseStartAddress" id="dfuseStartAddress"  hidden="true" title="Initial memory address to read/write from (hex)" size="10" pattern="0x[A-Fa-f0-9]+">
+                    <label for="dfuseUploadSize" hidden="true">DfuSe Upload Size:</label>
+                    <input type="number" name="dfuseUploadSize" id="dfuseUploadSize" min="1" max="2097152" hidden="true">
+                </div>
+            </b-form>
+        </div>
+    </b-row>
+    <b-row align="center" class="app_column">
+        <div>
+            <legend>Usb Programmer</legend>
+            <p> Connect to the Daisy - If this is your first time here, follow the steps in Usage section below </p>
+            <p><b-button variant="es" id="connect"> Connect</b-button></p>
+            <dialog id="interfaceDialog">
+                Your device has multiple DFU interfaces. Select one from the list below:
+                <b-form id="interfaceForm" method="dialog">
+                    <b-button id="selectInterface" type="submit">Select interface</b-button>
+                </b-form>
+            </dialog>
+            <div id="usbInfo" hidden="true" style="white-space: pre"></div>
+            <div id="dfuInfo"  hidden="true" style="white-space: pre"></div>
+            <div>
+                <b-button variant="es" v-b-toggle.collapsePrereqs>Display Prerequisates</b-button>
+                <b-button variant="es" v-b-toggle.collapseUsage>Display Usage</b-button>
+                <b-collapse id="collapseUsage">
+                    <div class="nested_list">
+                        <h2>Usage:</h2>
+                        <ol>
+                            <li><p>Connect the Daisy to the Computer</p></li>
+                            <li><p>Enter the system bootloader by holding the BOOT b-button down, and then pressing, and releasing the RESET b-button.</p></li>
+                            <li><p>Click the Connect b-button at the top of the page.</p></li>
+                            <li><p>Select, "DFU in FS Mode"</p></li>
+                            <li>
+                                <p>Now do either of the following:</p>
+                                <ul>
+                                    <li><p>Select a platform and an example from the drop down menu (descriptions, diagrams, etc. coming soon)</p></li>
+                                    <li><p>Click the Choose File button, and select the .bin file you would like to flash. This can be found in a projects "build" folder.</p></li>
+                                </ul>
+                            </li>
+                            <li><p>Click Program, and wait for the progress bar to finish.</p></li>
+                            <li><p>Now, if the program does not start immediatley, pressing RESET on the Daisy will cause the program to start running.</p></li>
+                        </ol>
+                        <p>
+                            On windows, you may have to update the driver to libusb.
+
+                            To do this, you can download the free software, Zadig. Instructions for this can be found on the DaisyWiki in the Windows toolchain instructions page.
+                        </p>
+                    </div>
+                </b-collapse>
+                <b-collapse id="collapsePrereqs">
+                    <div class="nested_list">
+                        <h1>Prerequisites</h1>
+                        <p>In order to use this, you will need:</p>
+                        <ul>
+                            <li>
+                                <p>An up-to-date version of Chrome, at least version 61 or newer</p>
+                            </li>
+                            <li>
+                                <p>A Daisy Seed SOM. (The user-uploaded binary will work for any STM32 chip with a built in DFU bootloader).</p>
+                            </li>
+                        </ul>
+                    </div>
+                </b-collapse>
+            </div>
+        </div>
+        </b-row>
+        <b-row align="between">
+        <b-col align="stretch" class="app_column">
+        <b-container>
+            <b-row>
+                <legend> Select a platform and a program from the menu below.</legend>
+                <b-form-select placeholder="Platform" v-model="sel_platform" textContent="Select a platform" id="platformSelector">
+                    <template v-slot:first>
+                        <b-form-select-option :value="null" disabled>-- Platform --</b-form-select-option>
+                    </template>
+                    <option v-for="platform in platforms" :value="platform">{{platform}}</option>
+                </b-form-select>
+                <b-form-select v-model="sel_example" id="firmwareSelector" required @change="programChanged">
+                    <template v-slot:first>
+                        <b-form-select-option :value="null" disabled>-- Example --</b-form-select-option>
+                    </template>
+                    <b-form-select-option v-for="example in platformExamples" v-bind:key="example.name" :value="example">{{example.name}}</b-form-select-option>
+                </b-form-select>
+            </b-row>
+            <p>OR</p>
+            <b-row>
+                <legend> Select a file from your computer</legend>
+                <p>
+                    <b-form-file
+                        id="firmwareFile"
+                        v-model="firmwareFile"
+                        :state="Boolean(firmwareFile)"
+                        placeholder="Choose or drop a file..."
+                        drop-placeholder="Drop file here..."
+                    ></b-form-file>
+                </p>
+            </b-row>
+        </b-container>
+        </b-col>
+        <b-col align="center"  class="app_column">
+            <div v-if="sel_example">
+                <p> Ready to program: </p>
+                <ul> 
+                    <div class="mt-3">Selected firmwareFile: {{ firmwareFile ? firmwareFile.name : '' }}</div>
+                    <li>Name: {{sel_example.name}}</li>
+                    <li>Description: {{sel_example.description}}</li>
+                    <li>File Location: {{sel_example.filepath}} </li>
+                </ul>
+            </div>
+            <b-button id="download" :disabled="!sel_platform || !sel_example || no_device"> Program</b-button>
+            <div class="log" id="downloadLog"></div>
+        </b-col>
+        </b-row>
     <br/>
-
-    <h2>Usage:</h2>
-    <ol>
-        <li><p>Connect the Daisy to the Computer</p></li>
-        <li><p>Enter the system bootloader by holding the BOOT button down, and then pressing, and releasing the RESET button.</p></li>
-        <li><p>Click the Connect button at the top of the page.</p></li>
-        <li><p>Select, "DFU in FS Mode"</p></li>
-        <li>
-            <p>Now do either of the following:</p>
-            <ul>
-                <li><p>Select a platform and an example from the drop down menu (descriptions, diagrams, etc. coming soon)</p></li>
-                <li><p>Click the Choose File button, and select the .bin file you would like to flash. This can be found in a projects "build" folder.</p></li>
-            </ul>
-        </li>
-        <li><p>Click Program, and wait for the progress bar to finish.</p></li>
-        <li><p>Now, if the program does not start immediatley, pressing RESET on the Daisy will cause the program to start running.</p></li>
-    </ol>
-    <p>
-        On windows, you may have to update the driver to libusb.
-
-        To do this, you can download the free software, Zadig. Instructions for this can be found on the DaisyWiki in the Windows toolchain instructions page.
-    </p>
-    <h1>About</h1>
-    <p>
-        This is a programming interface for the Daisy Platform.
-    </p>
-    <p>
-        So long as the Daisy is using the system-bootloader (accessed by holding BOOT and pressing RESET 
-        -- BOOT can be released once RESET has been released) the Daisy will show up as "DFU in FS Mode"
-    </p>
-    <h1>Prerequisites</h1>
-    <p>In order to use this, you will need:</p>
-    <ul>
-      <li>
-        <p>An up-to-date version of Chrome, at least version 61 or newer</p>
-      </li>
-      <li>
-        <p>A Daisy Seed SOM. (The user-uploaded binary will work for any STM32 chip with a built in DFU bootloader).</p>
-      </li>
-    </ul>
-    </div>
+    <b-row class="app_column">
+        <div>
+            <h1>About</h1>
+            <p>
+                This is a programming interface for the Daisy Platform.
+            </p>
+            <p>
+                So long as the Daisy is using the system-bootloader (see usage above) the Daisy will show up as "DFU in FS Mode"
+            </p>
+        </div>
+    </b-row>
+    </b-container>
     `,
     data: data,
     computed: {
@@ -197,9 +235,10 @@ var app = new Vue({
         programChanged(){
         	var self = this
         	// Read new file
+            self.firmwareFileName = self.sel_example.name
         	readServerFirmwareFile(self.sel_example.filepath)
         	setTimeout(function(){
-        		firmwareFile = buffer
+                firmwareFile = buffer
         	}, 500)
         }
     }

@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo python3 util/SimpleSecureHTTPServer.py --cert util/server.pem --port 9001
+python Programmer/util/SimpleSecureHTTPServer.py --cert Programmer/util/server.pem --port 9001

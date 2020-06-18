@@ -148,7 +148,8 @@ var app = new Vue({
         <b-row align="between">
         <b-col align="stretch" class="app_column">
         <b-container>
-            <b-row>
+            <legend> Program Select/Import </legend>
+            <b-row class="p-2">
                 <legend> Select a platform and a program from the menu below.</legend>
                 <b-form-select placeholder="Platform" v-model="sel_platform" textContent="Select a platform" id="platformSelector">
                     <template v-slot:first>
@@ -163,9 +164,8 @@ var app = new Vue({
                     <b-form-select-option v-for="example in platformExamples" v-bind:key="example.name" :value="example">{{example.name}}</b-form-select-option>
                 </b-form-select>
             </b-row>
-            <p>OR</p>
-            <b-row>
-                <legend> Select a file from your computer</legend>
+            <b-row class="p-2">
+                <legend> Or select a file from your computer</legend>
                 <p>
                     <b-form-file
                         id="firmwareFile"
@@ -179,7 +179,8 @@ var app = new Vue({
         </b-container>
         </b-col>
         <b-col align="center"  class="app_column">
-            <div v-if="sel_example||firmwareFile">
+            <legend>Programming Section</legend>
+            <div v-if="sel_example||firmwareFile" class="nested_list">
                 <p> Ready to program: </p>
                 <div v-if="displayImportedFile">
                     <div class="mt-3">Selected firmwareFile: {{ firmwareFile ? firmwareFile.name : '' }}</div>

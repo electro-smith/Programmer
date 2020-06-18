@@ -273,9 +273,6 @@ var device = null;
         let firmwareFileField = document.querySelector("#firmwareFile");
         // let firmwareFile = null;
 
-	// let firmwareSelectorField = document.querySelector("#firmwareSelector");
-	// let platformSelectorField = document.querySelector("#platformSelector");
-	
         let downloadLog = document.querySelector("#downloadLog");
         let uploadLog = document.querySelector("#uploadLog");
 
@@ -295,8 +292,6 @@ var device = null;
             uploadButton.disabled = true;
             downloadButton.disabled = true;
             firmwareFileField.disabled = true;
-	    // platformSelectorField.disabled = true;
-	    //firmwareSelectorField.disabled = true;
         }
 
         function onUnexpectedDisconnect(event) {
@@ -407,16 +402,12 @@ var device = null;
                 uploadButton.disabled = true;
                 downloadButton.disabled = true;
                 firmwareFileField.disabled = true;
-		// platformSelectorField.disabled = true;
-		//firmwareSelectorField.disabled = true;
 	    } else {
                 // DFU
                 detachButton.disabled = true;
                 uploadButton.disabled = false;
                 downloadButton.disabled = false;
                 firmwareFileField.disabled = false;
-		// platformSelectorField.disabled = false;
-		//firmwareSelectorField.disabled = false;
             }
 
             if (device.memoryInfo) {
@@ -520,6 +511,7 @@ var device = null;
                         } else if (interfaces.length == 1) {
                             await fixInterfaceNames(selectedDevice, interfaces);
                             device = await connect(new dfu.Device(selectedDevice, interfaces[0]));
+                            app.no_device = false;
                         } else {
                             await fixInterfaceNames(selectedDevice, interfaces);
                             async function connectToSelectedInterface() {
@@ -528,6 +520,7 @@ var device = null;
                                     console.log("No interace with flash address 0x08000000 found.")
                                     statusDisplay.textContent = "The selected device does not have a Flash Memory sectiona at address 0x08000000.";
                                 } else {
+                                    app.no_device = false;
                                     device = await connect(new dfu.Device(selectedDevice,filteredInterfaceList[0]));
                                 }
                             }
@@ -609,30 +602,6 @@ var device = null;
 
         //     return false;
         // });
-
-        firmwareFileField.addEventListener("change", function() {
-            firmwareFile = null;
-            if (firmwareFileField.files.length > 0) {
-                let file = firmwareFileField.files[0];
-                let reader = new FileReader();
-                reader.onload = function() {
-                    firmwareFile = reader.result;
-                };
-                reader.readAsArrayBuffer(file);
-            }
-        });
-
-	// firmwareSelectorField.addEventListener("change", (event) => {
-    //         firmwareFile = null;
-    //         if (true) {
-    //             let file = event.target.value;
-    //             let reader = new FileReader();
-    //             reader.onload = function() {
-    //                 firmwareFile = reader.result;
-    //             };
-    //             reader.readAsArrayBuffer(file);
-    //         }
-    //     });
 	
         downloadButton.addEventListener('click', async function(event) {
             event.preventDefault();

@@ -1,0 +1,30 @@
+
+.btn-es{
+    background-color: #ffb600;
+    color: white;
+}
+
+.app_body {
+    color: #fff;
+    background-color: #ffb600;
+}
+
+
+.app_column {
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    background-color: #343a40;
+    padding: 10px;
+    border: solid;
+    border-radius: 15px;
+    border-color: #fff;
+    margin: 5px;
+}
+
+.nested_list {
+    justify-content: left;
+    align-items: left;
+    margin: 20px;
+    text-align: left;
+}

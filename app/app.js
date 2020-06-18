@@ -8,7 +8,8 @@ var data = {
     sel_platform: null,
     sel_example: null,
     firmwareFile: null,
-    firmwareFileName: null
+    displayImportedFile: false,
+    displaySelectedFile: false
 }
 
 // Global Buffer for reading files
@@ -178,14 +179,18 @@ var app = new Vue({
         </b-container>
         </b-col>
         <b-col align="center"  class="app_column">
-            <div v-if="sel_example">
+            <div v-if="sel_example||firmwareFile">
                 <p> Ready to program: </p>
-                <ul> 
+                <div v-if="displayImportedFile">
                     <div class="mt-3">Selected firmwareFile: {{ firmwareFile ? firmwareFile.name : '' }}</div>
-                    <li>Name: {{sel_example.name}}</li>
-                    <li>Description: {{sel_example.description}}</li>
-                    <li>File Location: {{sel_example.filepath}} </li>
-                </ul>
+                </div>
+                <div v-else-if="displaySelectedFile">
+                    <ul> 
+                        <li>Name: {{sel_example.name}}</li>
+                        <li>Description: {{sel_example.description}}</li>
+                        <li>File Location: {{sel_example.filepath}} </li>
+                    </ul>
+                </div>
             </div>
             <b-button id="download" :disabled="!sel_platform || !sel_example || no_device"> Program</b-button>
             <div class="log" id="downloadLog"></div>
@@ -236,10 +241,33 @@ var app = new Vue({
         	var self = this
         	// Read new file
             self.firmwareFileName = self.sel_example.name
+            this.displayImportedFile = false;
+            this.displaySelectedFile = true;
         	readServerFirmwareFile(self.sel_example.filepath)
         	setTimeout(function(){
                 firmwareFile = buffer
         	}, 500)
+        },
+    },
+    watch: {
+        firmwareFile(newfile){
+            firmwareFile = null;
+            this.displayImportedFile = true;
+            this.displaySelectedFile = false;
+            let reader = new FileReader();
+            reader.onload = function() {
+                this.firmwareFile = reader.result;
+                firmwareFile = reader.result;
+            }
+            reader.readAsArrayBuffer(newfile);
+            // if (this.firmwareFile.files.length > 0) {
+            //     let file = this.firmwareFile.files[0];
+            //     let reader = new FileReader();
+            //     reader.onload = function() {
+            //         firmwareFile = reader.result;
+            //     };
+            //     reader.readAsArrayBuffer(file);
+            // }
         }
     }
 })

@@ -196,18 +196,6 @@ var app = new Vue({
             <div class="log" id="downloadLog"></div>
         </b-col>
         </b-row>
-    <br/>
-    <b-row class="app_column">
-        <div>
-            <h1>About</h1>
-            <p>
-                This is a programming interface for the Daisy Platform.
-            </p>
-            <p>
-                So long as the Daisy is using the system-bootloader (see usage above) the Daisy will show up as "DFU in FS Mode"
-            </p>
-        </div>
-    </b-row>
     </b-container>
     `,
     data: data,
@@ -260,14 +248,6 @@ var app = new Vue({
                 firmwareFile = reader.result;
             }
             reader.readAsArrayBuffer(newfile);
-            // if (this.firmwareFile.files.length > 0) {
-            //     let file = this.firmwareFile.files[0];
-            //     let reader = new FileReader();
-            //     reader.onload = function() {
-            //         firmwareFile = reader.result;
-            //     };
-            //     reader.readAsArrayBuffer(file);
-            // }
         }
     }
 })

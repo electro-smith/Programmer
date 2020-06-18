@@ -108,8 +108,8 @@ var app = new Vue({
                         <h2>Usage:</h2>
                         <ol>
                             <li><p>Connect the Daisy to the Computer</p></li>
-                            <li><p>Enter the system bootloader by holding the BOOT b-button down, and then pressing, and releasing the RESET b-button.</p></li>
-                            <li><p>Click the Connect b-button at the top of the page.</p></li>
+                            <li><p>Enter the system bootloader by holding the BOOT button down, and then pressing, and releasing the RESET button.</p></li>
+                            <li><p>Click the Connect button at the top of the page.</p></li>
                             <li><p>Select, "DFU in FS Mode"</p></li>
                             <li>
                                 <p>Now do either of the following:</p>

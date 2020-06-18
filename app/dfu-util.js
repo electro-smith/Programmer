@@ -511,6 +511,7 @@ var device = null;
                         } else if (interfaces.length == 1) {
                             await fixInterfaceNames(selectedDevice, interfaces);
                             device = await connect(new dfu.Device(selectedDevice, interfaces[0]));
+                            app.no_device = false;
                         } else {
                             await fixInterfaceNames(selectedDevice, interfaces);
                             async function connectToSelectedInterface() {
@@ -519,6 +520,7 @@ var device = null;
                                     console.log("No interace with flash address 0x08000000 found.")
                                     statusDisplay.textContent = "The selected device does not have a Flash Memory sectiona at address 0x08000000.";
                                 } else {
+                                    app.no_device = false;
                                     device = await connect(new dfu.Device(selectedDevice,filteredInterfaceList[0]));
                                 }
                             }

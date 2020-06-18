@@ -101,7 +101,7 @@ var app = new Vue({
             <div id="usbInfo" hidden="true" style="white-space: pre"></div>
             <div id="dfuInfo"  hidden="true" style="white-space: pre"></div>
             <div>
-                <b-button variant="es" v-b-toggle.collapsePrereqs>Display Prerequisates</b-button>
+                <b-button variant="es" v-b-toggle.collapseRequirements>Display Requirements</b-button>
                 <b-button variant="es" v-b-toggle.collapseUsage>Display Usage</b-button>
                 <b-collapse id="collapseUsage">
                     <div class="nested_list">
@@ -128,9 +128,9 @@ var app = new Vue({
                         </p>
                     </div>
                 </b-collapse>
-                <b-collapse id="collapsePrereqs">
+                <b-collapse id="collapseRequirements">
                     <div class="nested_list">
-                        <h1>Prerequisites</h1>
+                        <h1>Requirements</h1>
                         <p>In order to use this, you will need:</p>
                         <ul>
                             <li>
@@ -181,11 +181,8 @@ var app = new Vue({
         <b-col align="center"  class="app_column">
             <legend>Programming Section</legend>
             <div v-if="sel_example||firmwareFile" class="nested_list">
-                <p> Ready to program: </p>
-                <div v-if="displayImportedFile">
-                    <div class="mt-3">Selected firmwareFile: {{ firmwareFile ? firmwareFile.name : '' }}</div>
-                </div>
-                <div v-else-if="displaySelectedFile">
+                <p> Ready to program: </p>             
+                <div v-if="displaySelectedFile">
                     <ul> 
                         <li>Name: {{sel_example.name}}</li>
                         <li>Description: {{sel_example.description}}</li>
@@ -193,7 +190,7 @@ var app = new Vue({
                     </ul>
                 </div>
             </div>
-            <b-button id="download" :disabled="!sel_platform || !sel_example || no_device"> Program</b-button>
+            <b-button id="download" variant='es' :disabled="no_device || !sel_example"> Program</b-button>
             <div class="log" id="downloadLog"></div>
         </b-col>
         </b-row>
@@ -230,7 +227,6 @@ var app = new Vue({
         	var self = this
         	// Read new file
             self.firmwareFileName = self.sel_example.name
-            this.displayImportedFile = false;
             this.displaySelectedFile = true;
         	readServerFirmwareFile(self.sel_example.filepath)
         	setTimeout(function(){
@@ -241,8 +237,16 @@ var app = new Vue({
     watch: {
         firmwareFile(newfile){
             firmwareFile = null;
-            this.displayImportedFile = true;
-            this.displaySelectedFile = false;
+            this.displaySelectedFile = true;
+            // Create dummy example struct
+            // This updates sel_example to enable the Program button when a file is loaded
+            var new_example = {
+                name: newfile.name,
+                description: "Imported File",
+                filepath: null,
+                platform: null
+            }
+            this.sel_example = new_example;
             let reader = new FileReader();
             reader.onload = function() {
                 this.firmwareFile = reader.result;

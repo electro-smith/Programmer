@@ -4,11 +4,6 @@
     color: white;
 }
 
-.btn-grey {
-    background-color:#5c5c5c;
-    color: white;
-}
-
 .app_body {
     color: #fff;
     background-color: #ffb600;
@@ -19,7 +14,7 @@
     align-items: center;
     justify-content: center;
     color: #fff;
-    background-color: #5c5c5c;
+    background-color: #343a40;
     padding: 10px;
     border: solid;
     border-radius: 15px;

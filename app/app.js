@@ -60,33 +60,33 @@ var app = new Vue({
     template: 
     `
     <b-container class="app_body">
-    <b-row align="center" class="app_column">
-        <div align="center">
-            <button id="detach" disabled="true" hidden="true">Detach DFU</button>
-            <button id="upload" disabled="true" hidden="true">Upload</button>
+    <b-navbar type="dark" variant="dark">
+    <b-navbar-brand href="#">Daisy Programmer</b-navbar-brand>
+    <b-navbar-nav class="ml-auto">
+    <p>USB Programmer for Firmware updates on the Daisy product line.</p>
+    </b-navbar-nav>
 
-            <h1>Electrosmith Programmer for Daisy</h1>
-            <br/>
-            <p>USB Programmer for Firmware updates on Daisy product line.</p>
+    </b-navbar>
+    <div align="center">
+        <button id="detach" disabled="true" hidden="true">Detach DFU</button>
+        <button id="upload" disabled="true" hidden="true">Upload</button>
+        <b-form id="configForm">
+            <p> <label for="transferSize"  hidden="true">Transfer Size:</label>
+            <input type="number" name="transferSize"  hidden="true" id="transferSize" value="1024"></input> </p>
+            <p> <span id="status"></span> </p>
 
-            <b-form id="configForm">
-                <p> <label for="transferSize"  hidden="true">Transfer Size:</label>
-                <input type="number" name="transferSize"  hidden="true" id="transferSize" value="1024"></input> </p>
-                <p> <span id="status"></span> </p>
+            <p><label hidden="true" for="vid">Vendor ID (hex):</label>
+            <input hidden="true" list="vendor_ids" type="text" name="vid" id="vid" maxlength="6" size="8" pattern="0x[A-Fa-f0-9]{1,4}">
+            <datalist id="vendor_ids"> </datalist> </p>
 
-                <p><label hidden="true" for="vid">Vendor ID (hex):</label>
-                <input hidden="true" list="vendor_ids" type="text" name="vid" id="vid" maxlength="6" size="8" pattern="0x[A-Fa-f0-9]{1,4}">
-                <datalist id="vendor_ids"> </datalist> </p>
-
-                <div id="dfuseFields" hidden="true">
-                    <label for="dfuseStartAddress" hidden="true">DfuSe Start Address:</label>
-                    <input type="text" name="dfuseStartAddress" id="dfuseStartAddress"  hidden="true" title="Initial memory address to read/write from (hex)" size="10" pattern="0x[A-Fa-f0-9]+">
-                    <label for="dfuseUploadSize" hidden="true">DfuSe Upload Size:</label>
-                    <input type="number" name="dfuseUploadSize" id="dfuseUploadSize" min="1" max="2097152" hidden="true">
-                </div>
-            </b-form>
-        </div>
-    </b-row>
+            <div id="dfuseFields" hidden="true">
+                <label for="dfuseStartAddress" hidden="true">DfuSe Start Address:</label>
+                <input type="text" name="dfuseStartAddress" id="dfuseStartAddress"  hidden="true" title="Initial memory address to read/write from (hex)" size="10" pattern="0x[A-Fa-f0-9]+">
+                <label for="dfuseUploadSize" hidden="true">DfuSe Upload Size:</label>
+                <input type="number" name="dfuseUploadSize" id="dfuseUploadSize" min="1" max="2097152" hidden="true">
+            </div>
+        </b-form>
+    </div>
     <b-row align="center" class="app_column">
         <div>
             <legend>Usb Programmer</legend>

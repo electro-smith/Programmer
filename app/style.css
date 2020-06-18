@@ -4,6 +4,11 @@
     color: white;
 }
 
+.btn-grey {
+    background-color:#5c5c5c;
+    color: white;
+}
+
 .app_body {
     color: #fff;
     background-color: #ffb600;

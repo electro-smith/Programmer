@@ -1,0 +1,3 @@
+[submodule "showdown"]
+	path = showdown
+	url = https://github.com/showdownjs/showdown

@@ -210,7 +210,7 @@ var app = new Vue({
             <div class="log" id="downloadLog"></div>
         </b-col>
         </b-row>
-    <b-row align="center" class="app_column">
+    <b-row align="left" class="app_column">
       <div>
         <legend>ReadMe</legend> <div id = "readme"></div>
       </div>

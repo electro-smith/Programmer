@@ -39,10 +39,26 @@ function gatherExampleData(fpath)
     raw.send(null)
 }
 
+function displayReadMe(fname)
+{
+    var url = "https://raw.githubusercontent.com/electro-smith/DaisyExamples/master"
+    fname   = fname.substring(5,fname.length-4);
+    url     = url + fname + "/README.md";
+
+    var converter = new showdown.Converter();
+    
+    div = document.getElementById("readme")
+    
+    fetch(url)
+	.then(response => response.text())
+	.then(data => div.innerHTML = converter.makeHtml(data));
+}
+
 function readServerFirmwareFile(path)
 {
     var raw = new XMLHttpRequest();
     var fname = path;
+    displayReadMe(fname)
     raw.open("GET", fname, true);
     raw.responseType = "arraybuffer"
     raw.onreadystatechange = function ()
@@ -194,6 +210,12 @@ var app = new Vue({
             <div class="log" id="downloadLog"></div>
         </b-col>
         </b-row>
+    <b-row align="center" class="app_column">
+      <div>
+        <legend>ReadMe</legend> <div id = "readme"></div>
+      </div>
+    </b-row>        
+    
     </b-container>
     `,
     data: data,
@@ -226,7 +248,7 @@ var app = new Vue({
         programChanged(){
         	var self = this
         	// Read new file
-            self.firmwareFileName = self.sel_example.name
+	    self.firmwareFileName = self.sel_example.name
             this.displaySelectedFile = true;
         	readServerFirmwareFile(self.sel_example.filepath)
         	setTimeout(function(){

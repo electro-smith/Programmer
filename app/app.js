@@ -44,21 +44,21 @@ function displayReadMe(fname)
     var url = "https://raw.githubusercontent.com/electro-smith/DaisyExamples/master"
     fname   = fname.substring(5,fname.length-4);
     url     = url + fname + "/README.md";
-
-    var converter = new showdown.Converter();
     
     div = document.getElementById("readme")
     
     fetch(url)
 	.then(response => response.text())
-	.then(data => div.innerHTML = converter.makeHtml(data));
+    	.then(data => div.innerHTML = marked(data));
 }
 
 function readServerFirmwareFile(path)
 {
     var raw = new XMLHttpRequest();
     var fname = path;
+
     displayReadMe(fname)
+
     raw.open("GET", fname, true);
     raw.responseType = "arraybuffer"
     raw.onreadystatechange = function ()

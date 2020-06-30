@@ -51,7 +51,7 @@ function displayReadMe(fname)
     marked.setOptions({
 	renderer: new marked.Renderer(),
 	highlight: function(code, language) {
-	    const validLanguage = hljs.getLanguage(language) ? language : 'cpp';
+	    const validLanguage = hljs.getLanguage(language) ? language : 'plaintext';
 	    return hljs.highlight(validLanguage, code).value;
 	},
 	pedantic: false,

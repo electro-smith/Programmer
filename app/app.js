@@ -215,6 +215,7 @@ var app = new Vue({
         <b-col align="center" cols = "7" class="app_column">
             <legend>Programming Section</legend>
             <b-button id="download" variant='es' :disabled="no_device || !sel_example"> Program</b-button>
+            <div class="log" id="downloadLog"></div>            
             <br><br>
             <div v-if="sel_example||firmwareFile" >            
                 <div v-if="displaySelectedFile">
@@ -225,7 +226,7 @@ var app = new Vue({
             <br>
             </div>
             <div><div id = "readme"></div> </div>
-            <div class="log" id="downloadLog"></div>
+            
         </b-col>
         </b-row>
     </b-row>        

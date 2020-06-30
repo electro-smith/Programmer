@@ -201,19 +201,16 @@ var app = new Vue({
                 <div v-if="displaySelectedFile">
                     <ul> 
                         <li>Name: {{sel_example.name}}</li>
-                        <li>Description: {{sel_example.description}}</li>
+                        <!--<li>Description: {{sel_example.description}}</li>-->
                         <li>File Location: {{sel_example.filepath}} </li>
                     </ul>
                 </div>
             </div>
             <b-button id="download" variant='es' :disabled="no_device || !sel_example"> Program</b-button>
+            <div><div id = "readme"></div> </div>
             <div class="log" id="downloadLog"></div>
         </b-col>
         </b-row>
-    <b-row align="left" class="app_column">
-      <div>
-        <legend>ReadMe</legend> <div id = "readme"></div>
-      </div>
     </b-row>        
     
     </b-container>

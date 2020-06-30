@@ -212,19 +212,18 @@ var app = new Vue({
             </b-row>
         </b-container>
         </b-col>
-        <b-col align="center"  class="app_column">
+        <b-col align="center" cols = "7" class="app_column">
             <legend>Programming Section</legend>
-            <div v-if="sel_example||firmwareFile" class="nested_list">
-                <p> Ready to program: </p>             
-                <div v-if="displaySelectedFile">
-                    <ul> 
-                        <li>Name: {{sel_example.name}}</li>
-                        <!--<li>Description: {{sel_example.description}}</li>-->
-                        <li>File Location: {{sel_example.filepath}} </li>
-                    </ul>
-                </div>
-            </div>
             <b-button id="download" variant='es' :disabled="no_device || !sel_example"> Program</b-button>
+            <br><br>
+            <div v-if="sel_example||firmwareFile" >            
+                <div v-if="displaySelectedFile">
+                <h3 class="info">Name: {{sel_example.name}}</h3>
+                <!--<li>Description: {{sel_example.description}}</li>-->
+                <h3 class="info">File Location: {{sel_example.filepath}} </h3>
+                </div>
+            <br>
+            </div>
             <div><div id = "readme"></div> </div>
             <div class="log" id="downloadLog"></div>
         </b-col>

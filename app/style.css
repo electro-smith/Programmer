@@ -1,3 +1,7 @@
+.info{
+    text-align: left;
+}
+
 table {
   border-collapse: collapse;
 }
@@ -9,6 +13,7 @@ table, th, td {
 code.language-cpp{
     color: white;
 }
+
 #readme{
 text-align: left;
 }

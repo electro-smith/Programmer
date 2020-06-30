@@ -39,6 +39,7 @@ function gatherExampleData(fpath)
     raw.send(null)
 }
 
+
 function displayReadMe(fname)
 {
     var url = "https://raw.githubusercontent.com/electro-smith/DaisyExamples/master"
@@ -46,11 +47,28 @@ function displayReadMe(fname)
     url     = url + fname + "/README.md";
     
     div = document.getElementById("readme")
+
+    marked.setOptions({
+	renderer: new marked.Renderer(),
+	highlight: function(code, language) {
+	    const validLanguage = hljs.getLanguage(language) ? language : 'cpp';
+	    return hljs.highlight(validLanguage, code).value;
+	},
+	pedantic: false,
+	gfm: true,
+	breaks: false,
+	sanitize: false,
+	smartLists: true,
+	smartypants: false,
+	xhtml: false
+    });
+    
     
     fetch(url)
 	.then(response => response.text())
     	.then(data => div.innerHTML = marked(data));
-}
+};
+
 
 function readServerFirmwareFile(path)
 {

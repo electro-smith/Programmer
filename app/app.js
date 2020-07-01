@@ -39,10 +39,44 @@ function gatherExampleData(fpath)
     raw.send(null)
 }
 
+
+function displayReadMe(fname)
+{
+    var url = "https://raw.githubusercontent.com/electro-smith/DaisyExamples/master"
+    fname   = fname.substring(5,fname.length-4);
+    url     = url + fname + "/README.md";
+    
+    div = document.getElementById("readme")
+
+    marked.setOptions({
+	renderer: new marked.Renderer(),
+	highlight: function(code, language) {
+	    const validLanguage = hljs.getLanguage(language) ? language : 'plaintext';
+	    return hljs.highlight(validLanguage, code).value;
+	},
+	pedantic: false,
+	gfm: true,
+	breaks: false,
+	sanitize: false,
+	smartLists: true,
+	smartypants: false,
+	xhtml: false
+    });
+    
+    
+    fetch(url)
+	.then(response => response.text())
+    	.then(data => div.innerHTML = marked(data));
+};
+
+
 function readServerFirmwareFile(path)
 {
     var raw = new XMLHttpRequest();
     var fname = path;
+
+    displayReadMe(fname)
+
     raw.open("GET", fname, true);
     raw.responseType = "arraybuffer"
     raw.onreadystatechange = function ()
@@ -178,22 +212,25 @@ var app = new Vue({
             </b-row>
         </b-container>
         </b-col>
-        <b-col align="center"  class="app_column">
+        <b-col align="center" cols = "7" class="app_column">
             <legend>Programming Section</legend>
-            <div v-if="sel_example||firmwareFile" class="nested_list">
-                <p> Ready to program: </p>             
-                <div v-if="displaySelectedFile">
-                    <ul> 
-                        <li>Name: {{sel_example.name}}</li>
-                        <li>Description: {{sel_example.description}}</li>
-                        <li>File Location: {{sel_example.filepath}} </li>
-                    </ul>
-                </div>
-            </div>
             <b-button id="download" variant='es' :disabled="no_device || !sel_example"> Program</b-button>
-            <div class="log" id="downloadLog"></div>
+            <div class="log" id="downloadLog"></div>            
+            <br><br>
+            <div v-if="sel_example||firmwareFile" >            
+                <div v-if="displaySelectedFile">
+                <h3 class="info">Name: {{sel_example.name}}</h3>
+                <!--<li>Description: {{sel_example.description}}</li>-->
+                <h3 class="info">File Location: {{sel_example.filepath}} </h3>
+                </div>
+            <br>
+            </div>
+            <div><div id = "readme"></div> </div>
+            
         </b-col>
         </b-row>
+    </b-row>        
+    
     </b-container>
     `,
     data: data,
@@ -226,7 +263,7 @@ var app = new Vue({
         programChanged(){
         	var self = this
         	// Read new file
-            self.firmwareFileName = self.sel_example.name
+	    self.firmwareFileName = self.sel_example.name
             this.displaySelectedFile = true;
         	readServerFirmwareFile(self.sel_example.filepath)
         	setTimeout(function(){

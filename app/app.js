@@ -43,6 +43,10 @@ function gatherExampleData(fpath)
 function displayReadMe(fname)
 {
     var url = "https://raw.githubusercontent.com/electro-smith/" + self.data.sel_example.url + "/master"
+    if (self.data.sel_example.url == "DaisySP"){
+        url += "/examples"
+    }
+    
     fname   = fname.substring(5,fname.length-4);
     url     = url + fname + "/README.md";
     

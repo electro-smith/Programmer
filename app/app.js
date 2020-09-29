@@ -1,7 +1,7 @@
 // Generic Strings
-const root_url = "https://electro-smith.github.io/Programmer";
+const root_url = "https://electro-smith.github.io/Programmer"
 
-var data = {
+var data = { 
     platforms: [],
     examples: [],
     no_device: true,
@@ -9,11 +9,11 @@ var data = {
     sel_example: null,
     firmwareFile: null,
     displayImportedFile: false,
-    displaySelectedFile: false,
-};
+    displaySelectedFile: false
+}
 
 // Global Buffer for reading files
-var buffer;
+var buffer
 
 // Gets the root url
 // should be https://localhost:9001/Programmer on local
@@ -24,71 +24,79 @@ function getRootUrl() {
 }
 
 // Reads the specified file containing JSON example meta-data
-function gatherExampleData(fpath) {
+function gatherExampleData(fpath)
+{
     var raw = new XMLHttpRequest();
     raw.open("GET", fpath, true);
-    raw.responseType = "text";
-    raw.onreadystatechange = function () {
+    raw.responseType = "text"
+    raw.onreadystatechange = function ()
+    {
         if (this.readyState === 4 && this.status === 200) {
-            var obj = this.response;
+            var obj = this.response; 
             buffer = JSON.parse(obj);
         }
-    };
-    raw.send(null);
+    }
+    raw.send(null)
 }
 
-function displayReadMe(fname) {
-    var url = "https://raw.githubusercontent.com/electro-smith/DaisyExamples/master";
-    fname = fname.substring(5, fname.length - 4);
-    url = url + fname + "/README.md";
 
-    div = document.getElementById("readme");
+function displayReadMe(fname)
+{
+    var url = self.data.sel_example.url
+    fname   = fname.substring(5,fname.length-4);
+    
+    div = document.getElementById("readme")
 
     marked.setOptions({
-        renderer: new marked.Renderer(),
-        highlight: function (code, language) {
-            const validLanguage = hljs.getLanguage(language) ? language : "plaintext";
-            return hljs.highlight(validLanguage, code).value;
-        },
-        pedantic: false,
-        gfm: true,
-        breaks: false,
-        sanitize: false,
-        smartLists: true,
-        smartypants: false,
-        xhtml: false,
+	renderer: new marked.Renderer(),
+	highlight: function(code, language) {
+	    const validLanguage = hljs.getLanguage(language) ? language : 'plaintext';
+	    return hljs.highlight(validLanguage, code).value;
+	},
+	pedantic: false,
+	gfm: true,
+	breaks: false,
+	sanitize: false,
+	smartLists: true,
+	smartypants: false,
+	xhtml: false
     });
-
+    
+    
     fetch(url)
-        .then((response) => response.text())
-        .then((data) => (div.innerHTML = marked(data)));
+	.then(response => response.text())
+    	.then(text => div.innerHTML = marked(text.replace("404: Not Found", "No additional details available for this example.")));
 }
 
-function readServerFirmwareFile(path) {
+
+function readServerFirmwareFile(path)
+{
     var raw = new XMLHttpRequest();
     var fname = path;
 
-    displayReadMe(fname);
+    displayReadMe(fname)
 
     raw.open("GET", fname, true);
-    raw.responseType = "arraybuffer";
-    raw.onreadystatechange = function () {
+    raw.responseType = "arraybuffer"
+    raw.onreadystatechange = function ()
+    {
         if (this.readyState === 4 && this.status === 200) {
-            var obj = this.response;
-            buffer = obj;
+            var obj = this.response; 
+            buffer = obj
         }
-    };
-    raw.send(null);
+    }
+    raw.send(null)
 }
 
 var app = new Vue({
-    el: "#app",
-    template: `
+    el: '#app',
+    template: 
+    `
     <b-container class="app_body">
     <b-navbar type="dark" variant="dark">
     <b-navbar-brand href="#">Daisy Programmer</b-navbar-brand>
     <b-navbar-nav class="ml-auto">
-    <p>USB Programmer for firmware updates on the Daisy product line.</p>
+    <p>USB Programmer for Firmware updates on the Daisy product line.</p>
     </b-navbar-nav>
 
     </b-navbar>
@@ -114,7 +122,7 @@ var app = new Vue({
     </div>
     <b-row align="center" class="app_column">
         <div>
-            <legend>USB Programmer</legend>
+            <legend>Usb Programmer</legend>
             <p> Connect to the Daisy - If this is your first time here, follow the steps in Usage section below </p>
             <p><b-button variant="es" id="connect"> Connect</b-button></p>
             <dialog id="interfaceDialog">
@@ -206,9 +214,9 @@ var app = new Vue({
         <b-col align="center" cols = "7" class="app_column">
             <legend>Programming Section</legend>
             <b-button id="download" variant='es' :disabled="no_device || !sel_example"> Program</b-button>
-            <div class="log" id="downloadLog"></div>
+            <div class="log" id="downloadLog"></div>            
             <br><br>
-            <div v-if="sel_example||firmwareFile">
+            <div v-if="sel_example||firmwareFile" >            
                 <div v-if="displaySelectedFile">
                 <h3 class="info">Name: {{sel_example.name}}</h3>
                 <!--<li>Description: {{sel_example.description}}</li>-->
@@ -217,51 +225,53 @@ var app = new Vue({
             <br>
             </div>
             <div><div id = "readme"></div> </div>
-
+            
         </b-col>
         </b-row>
-    </b-row>
-
+    </b-row>        
+    
     </b-container>
     `,
     data: data,
     computed: {
         platformExamples: function () {
-            return this.examples.filter((example) => example.platform === this.sel_platform);
-        },
+        	
+            return this.examples.filter(example => example.platform === this.sel_platform)
+        }
     },
     created() {
-        console.log("Page Created");
+        console.log("Page Created")
     },
     mounted() {
-        var self = this;
-        console.log("Mounted Page");
+        var self = this
+        console.log("Mounted Page")
         var fpath = getRootUrl().concat("bin/examples.json");
-        gatherExampleData(fpath);
-        setTimeout(function () {
-            self.importExamples(buffer);
-        }, 1000);
+        gatherExampleData(fpath)
+        setTimeout(function(){
+            self.importExamples(buffer)
+        }, 1000)
+            
     },
     methods: {
         importExamples(data) {
-            var self = this;
-            const unique_platforms = [...new Set(data.map((obj) => obj.platform))];
-            self.examples = data;
-            self.platforms = unique_platforms;
+            var self = this
+            const unique_platforms = [...new Set(data.map(obj => obj.platform))] 
+            self.examples = data
+            self.platforms = unique_platforms
         },
-        programChanged() {
-            var self = this;
-            // Read new file
-            self.firmwareFileName = self.sel_example.name;
+        programChanged(){
+        	var self = this
+        	// Read new file
+	    self.firmwareFileName = self.sel_example.name
             this.displaySelectedFile = true;
-            readServerFirmwareFile(self.sel_example.filepath);
-            setTimeout(function () {
-                firmwareFile = buffer;
-            }, 500);
+        	readServerFirmwareFile(self.sel_example.filepath)
+        	setTimeout(function(){
+                firmwareFile = buffer
+        	}, 500)
         },
     },
     watch: {
-        firmwareFile(newfile) {
+        firmwareFile(newfile){
             firmwareFile = null;
             this.displaySelectedFile = true;
             // Create dummy example struct
@@ -270,15 +280,15 @@ var app = new Vue({
                 name: newfile.name,
                 description: "Imported File",
                 filepath: null,
-                platform: null,
-            };
+                platform: null
+            }
             this.sel_example = new_example;
             let reader = new FileReader();
-            reader.onload = function () {
+            reader.onload = function() {
                 this.firmwareFile = reader.result;
                 firmwareFile = reader.result;
-            };
+            }
             reader.readAsArrayBuffer(newfile);
-        },
-    },
-});
+        }
+    }
+})

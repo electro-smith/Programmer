@@ -155,7 +155,7 @@ var app = new Vue({
                             <li><p>Now, if the program does not start immediatley, pressing RESET on the Daisy will cause the program to start running.</p></li>
                         </ol>
                         <p>
-                            On windows, you may have to update the driver to libusb.
+                            On windows, you may have to update the driver to WinUSB.
 
                             To do this, you can download the free software, Zadig. Instructions for this can be found on the DaisyWiki in the Windows toolchain instructions page.
                         </p>

@@ -94,9 +94,9 @@ var app = new Vue({
     `
     <b-container class="app_body">
     <b-navbar type="dark" variant="dark">
-    <b-navbar-brand href="#">Daisy Programmer</b-navbar-brand>
+    <b-navbar-brand href="#">Daisy Web Programmer</b-navbar-brand>
     <b-navbar-nav class="ml-auto">
-    <p>USB Programmer for Firmware updates on the Daisy product line.</p>
+    <p>USB Web Programmer for Firmware updates on the Daisy product line.</p>
     </b-navbar-nav>
 
     </b-navbar>
@@ -122,7 +122,7 @@ var app = new Vue({
     </div>
     <b-row align="center" class="app_column">
         <div>
-            <legend>Usb Programmer</legend>
+            <legend>Daisy Web Programmer</legend>
             <p> Connect to the Daisy - If this is your first time here, follow the steps in Usage section below </p>
             <p><b-button variant="es" id="connect"> Connect</b-button></p>
             <dialog id="interfaceDialog">

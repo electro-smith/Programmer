@@ -7,7 +7,7 @@ https://github.com/devanlai/webdfu -- https://devanlai.github.io/webdfu
 
 ## Use
 
-The programmer can programmer user-uploaded binary files or select from a pre-compiled list.
+The programmer can flash user-uploaded binary files or select from a pre-compiled list.
 
 To use the programmer, go to this page:
 

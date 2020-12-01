@@ -173,9 +173,8 @@ var app = new Vue({
             <div id="usbInfo" hidden="true" style="white-space: pre"></div>
             <div id="dfuInfo"  hidden="true" style="white-space: pre"></div>
             <div>
-                <b-button variant="es" v-b-toggle.collapseRequirements>Display Requirements</b-button>
-                <b-button variant="es" v-b-toggle.collapseUsage>Display Usage</b-button>
-                <b-collapse id="collapseUsage">
+                <b-button variant="es" v-b-toggle.collapseHelp>Display Help</b-button>
+                <b-collapse id="collapseHelp">
                     <div class="nested_list">
                         <h2>Usage:</h2>
                         <ol>
@@ -200,7 +199,7 @@ var app = new Vue({
                         </p>
                     </div>
                 </b-collapse>
-                <b-collapse id="collapseRequirements">
+                <b-collapse id="collapseHelp">
                     <div class="nested_list">
                         <h1>Requirements</h1>
                         <p>In order to use this, you will need:</p>

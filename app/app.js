@@ -162,7 +162,7 @@ var app = new Vue({
     <b-row align="center" class="app_column">
         <div>
             <legend>Daisy Web Programmer</legend>
-            <p> Connect to the Daisy - If this is your first time here, follow the steps in Usage section below </p>
+            <p> Connect to the Daisy - If this is your first time here, follow the steps in Help section below </p>
             <p><b-button variant="es" id="connect"> Connect</b-button></p>
             <dialog id="interfaceDialog">
                 Your device has multiple DFU interfaces. Select one from the list below:

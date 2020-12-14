@@ -33,11 +33,11 @@ text-align: left;
     align-items: center;
     justify-content: center;
     color: #fff;
-    background-color: #343a40;
+    background-color: #505050;
     padding: 10px;
     border: solid;
     border-radius: 15px;
-    border-color: #ffb600;
+    border-color: gray;
     margin: 5px;
 }
 
@@ -50,7 +50,7 @@ text-align: left;
 
 .daisystyle {
     color: #fff;
-    background-color: #343a40;
+    background-color: gray;
     padding: 10px;
     border: solid;
     border-radius: 15px;

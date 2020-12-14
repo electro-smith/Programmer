@@ -1,6 +1,15 @@
 // Generic Strings
 const root_url = "https://electro-smith.github.io/Programmer"
 
+// New changes involve reading from sources.json to find the 'sources' we should pull from
+// Those sources replace the previously hard coded 'examples.json' file, and should otherwise 
+// function the same.
+
+// The changes should primarily only affect gatherExampleData
+
+// When imported the examples will have the original data located in the .json file
+// as well as the 'source' field containing the data structure used to find the example
+
 var data = { 
     platforms: [],
     examples: [],
@@ -14,6 +23,7 @@ var data = {
 
 // Global Buffer for reading files
 var buffer
+var ex_buffer
 
 // Gets the root url
 // should be https://localhost:9001/Programmer on local
@@ -24,20 +34,57 @@ function getRootUrl() {
 }
 
 // Reads the specified file containing JSON example meta-data
-function gatherExampleData(fpath)
-{
-    var raw = new XMLHttpRequest();
-    raw.open("GET", fpath, true);
-    raw.responseType = "text"
-    raw.onreadystatechange = function ()
-    {
-        if (this.readyState === 4 && this.status === 200) {
-            var obj = this.response; 
-            buffer = JSON.parse(obj);
-        }
-    }
-    raw.send(null)
-}
+// function gatherExampleData()
+// {
+//     // Get Source list as data 
+//     var self = this // assign self to 'this' before nested function calls...
+//     var src_url = getRootUrl().concat("data/sources.json") 
+//     var raw = new XMLHttpRequest();
+//     raw.open("GET", src_url, true);
+//     raw.responseType = "text"
+//     raw.onreadystatechange = function ()
+//     {
+//         if (this.readyState === 4 && this.status === 200) {
+//             var obj = this.response; 
+//             buffer = JSON.parse(obj);
+//             buffer.forEach( function(ex_src) {
+//                 // Launch another request with async function to load examples from the 
+//                 // specified urls 
+//                 // This will fill examples directly, and replace the importExamples/timeout situation.
+//                 var ext_raw = new XMLHttpRequest();
+//                 ext_raw.open("GET", ex_src.data_url, true);
+//                 ext_raw.responseType = "text"
+//                 ext_raw.onreadystatechange = function ()
+//                 {
+//                     if (this.readyState === 4 && this.status === 200) {
+//                         // Now this.response will contain actual example data 
+//                         var ext_obj = this.response;
+//                         ex_buffer = JSON.parse(ext_obj);
+//                         // Now we could just fill the examples data
+//                         // ex_buffer.forEach( function(ex_data) {
+//                         //     console.log("%s - %s", ex_src.name, ex_data.name);
+//                         // })
+//                         const unique_platforms = [...new Set(ex_buffer.map(obj => obj.platform))]
+//                         // This needs to be fixed to 'ADD' examples
+//                         //self.examples = data
+//                         self.examples.push(ex_buffer)
+//                         var temp_platforms = self.platforms.push(unique_platforms)
+
+//                         const new_platforms = [...new Set(temp_platforms.map(obj => obj))]
+//                         self.platforms = new_platforms
+//                     }
+//                 }
+//                 ext_raw.send(null)
+
+//                     // var self = this
+//                     // const unique_platforms = [...new Set(data.map(obj => obj.platform))] 
+//                     // self.examples = data
+//                     // self.platforms = unique_platforms
+//             })
+//         }
+//     }
+//     raw.send(null)
+// }
 
 
 function displayReadMe(fname)
@@ -68,7 +115,6 @@ function displayReadMe(fname)
     	.then(text => div.innerHTML = marked(text.replace("404: Not Found", "No additional details available for this example.")));
 }
 
-
 function readServerFirmwareFile(path)
 {
     var raw = new XMLHttpRequest();
@@ -93,13 +139,6 @@ var app = new Vue({
     template: 
     `
     <b-container class="app_body">
-    <b-navbar type="dark" variant="dark">
-    <b-navbar-brand href="#">Daisy Web Programmer</b-navbar-brand>
-    <b-navbar-nav class="ml-auto">
-    <p>USB Web Programmer for Firmware updates on the Daisy product line.</p>
-    </b-navbar-nav>
-
-    </b-navbar>
     <div align="center">
         <button id="detach" disabled="true" hidden="true">Detach DFU</button>
         <button id="upload" disabled="true" hidden="true">Upload</button>
@@ -134,9 +173,8 @@ var app = new Vue({
             <div id="usbInfo" hidden="true" style="white-space: pre"></div>
             <div id="dfuInfo"  hidden="true" style="white-space: pre"></div>
             <div>
-                <b-button variant="es" v-b-toggle.collapseRequirements>Display Requirements</b-button>
-                <b-button variant="es" v-b-toggle.collapseUsage>Display Usage</b-button>
-                <b-collapse id="collapseUsage">
+                <b-button variant="es" v-b-toggle.collapseHelp>Display Help</b-button>
+                <b-collapse id="collapseHelp">
                     <div class="nested_list">
                         <h2>Usage:</h2>
                         <ol>
@@ -161,7 +199,7 @@ var app = new Vue({
                         </p>
                     </div>
                 </b-collapse>
-                <b-collapse id="collapseRequirements">
+                <b-collapse id="collapseHelp">
                     <div class="nested_list">
                         <h1>Requirements</h1>
                         <p>In order to use this, you will need:</p>
@@ -179,53 +217,54 @@ var app = new Vue({
         </div>
         </b-row>
         <b-row align="between">
-        <b-col align="stretch" class="app_column">
-        <b-container>
-            <legend> Program Select/Import </legend>
-            <b-row class="p-2">
-                <legend> Select a platform and a program from the menu below.</legend>
-                <b-form-select placeholder="Platform" v-model="sel_platform" textContent="Select a platform" id="platformSelector">
-                    <template v-slot:first>
-                        <b-form-select-option :value="null" disabled>-- Platform --</b-form-select-option>
-                    </template>
-                    <option v-for="platform in platforms" :value="platform">{{platform}}</option>
-                </b-form-select>
-                <b-form-select v-model="sel_example" id="firmwareSelector" required @change="programChanged">
-                    <template v-slot:first>
-                        <b-form-select-option :value="null" disabled>-- Example --</b-form-select-option>
-                    </template>
-                    <b-form-select-option v-for="example in platformExamples" v-bind:key="example.name" :value="example">{{example.name}}</b-form-select-option>
-                </b-form-select>
-            </b-row>
-            <b-row class="p-2">
-                <legend> Or select a file from your computer</legend>
-                <p>
-                    <b-form-file
-                        id="firmwareFile"
-                        v-model="firmwareFile"
-                        :state="Boolean(firmwareFile)"
-                        placeholder="Choose or drop a file..."
-                        drop-placeholder="Drop file here..."
-                    ></b-form-file>
-                </p>
-            </b-row>
-        </b-container>
-        </b-col>
-        <b-col align="center" cols = "7" class="app_column">
+            <b-col align="center" class="app_column">
+                <b-container>
+                    <legend> Program Select/Import </legend>
+                    <b-row class="p-2">
+                        <legend> Select a platform and a program from the menu below.</legend>
+                        <b-form-select placeholder="Platform" v-model="sel_platform" textContent="Select a platform" id="platformSelector">
+                            <template v-slot:first>
+                                <b-form-select-option :value="null" disabled>-- Platform --</b-form-select-option>
+                            </template>
+                            <option v-for="platform in platforms" :value="platform">{{platform}}</option>
+                        </b-form-select>
+                        <b-form-select v-model="sel_example" id="firmwareSelector" required @change="programChanged">
+                            <template v-slot:first>
+                                <b-form-select-option :value="null" disabled>-- Example --</b-form-select-option>
+                            </template>
+                            <b-form-select-option v-for="example in platformExamples" v-bind:key="example.name" :value="example">{{example.name}}</b-form-select-option>
+                        </b-form-select>
+                    </b-row>
+                    <b-row class="p-2">
+                        <legend> Or select a file from your computer</legend>
+                            <b-form-file
+                                id="firmwareFile"
+                                v-model="firmwareFile"
+                                :state="Boolean(firmwareFile)"
+                                placeholder="Choose or drop a file..."
+                                drop-placeholder="Drop file here..."
+                            ></b-form-file>
+                    </b-row>
+                </b-container>
+            </b-col>
+        </b-row>
+        <b-row>
+        <b-col align="center" class="app_column">
+        <b-container align="center">
             <legend>Programming Section</legend>
             <b-button id="download" variant='es' :disabled="no_device || !sel_example"> Program</b-button>
             <div class="log" id="downloadLog"></div>            
             <br><br>
             <div v-if="sel_example||firmwareFile" >            
                 <div v-if="displaySelectedFile">
-                <h3 class="info">Name: {{sel_example.name}}</h3>
+                <!--<h3 class="info">Name: {{sel_example.name}}</h3>-->
                 <!--<li>Description: {{sel_example.description}}</li>-->
-                <h3 class="info">File Location: {{sel_example.filepath}} </h3>
+                <!--<h3 class="info">File Location: {{sel_example.filepath}} </h3>-->
                 </div>
             <br>
             </div>
             <div><div id = "readme"></div> </div>
-            
+        </b-container>
         </b-col>
         </b-row>
     </b-row>        
@@ -245,26 +284,80 @@ var app = new Vue({
     mounted() {
         var self = this
         console.log("Mounted Page")
-        var fpath = getRootUrl().concat("bin/examples.json");
-        gatherExampleData(fpath)
-        setTimeout(function(){
-            self.importExamples(buffer)
-        }, 1000)
+        //var fpath = getRootUrl().concat("bin/examples.json");
+        //gatherExampleData()
+        // setTimeout(function(){
+        //     self.importExamples(buffer)
+        // }, 1000)
+        this.importExamples()
             
     },
     methods: {
-        importExamples(data) {
-            var self = this
-            const unique_platforms = [...new Set(data.map(obj => obj.platform))] 
-            self.examples = data
-            self.platforms = unique_platforms
+        importExamples() {
+            // var self = this
+            // const unique_platforms = [...new Set(data.map(obj => obj.platform))] 
+            // self.examples = data
+            // self.platforms = unique_platforms
+            // New code below:
+            // Get Source list as data 
+            var self = this // assign self to 'this' before nested function calls...
+            var src_url = getRootUrl().concat("data/sources.json") 
+            var raw = new XMLHttpRequest();
+            raw.open("GET", src_url, true);
+            raw.responseType = "text"
+            raw.onreadystatechange = function ()
+            {
+                if (this.readyState === 4 && this.status === 200) {
+                    var obj = this.response; 
+                    buffer = JSON.parse(obj);
+                    buffer.forEach( function(ex_src) {
+                        // Launch another request with async function to load examples from the 
+                        // specified urls 
+                        // This will fill examples directly, and replace the importExamples/timeout situation.
+                        var ext_raw = new XMLHttpRequest();
+                        ext_raw.open("GET", ex_src.data_url, true);
+                        ext_raw.responseType = "text"
+                        ext_raw.onreadystatechange = function ()
+                        {
+                            // This response will contain example data for the specified source.
+                            if (this.readyState === 4 && this.status === 200) {
+                                var ext_obj = this.response;
+                                ex_buffer = JSON.parse(ext_obj);
+                                const unique_platforms = [...new Set(ex_buffer.map(obj => obj.platform))]
+                                ex_buffer.forEach( function(ex_dat) {
+                                    //  Add "source" to example data
+                                    ex_dat.source = ex_src
+                                    self.examples.push(ex_dat)
+                                })
+                                unique_platforms.forEach( function(u_plat) {
+                                    if (!self.platforms.includes(u_plat)) {
+                                        self.platforms.push(u_plat)
+                                    }
+                                })
+                            }
+                        }
+                        ext_raw.send(null)
+
+                            // var self = this
+                            // const unique_platforms = [...new Set(data.map(obj => obj.platform))] 
+                            // self.examples = data
+                            // self.platforms = unique_platforms
+                    })
+                }
+            }
+            raw.send(null)
+
         },
         programChanged(){
         	var self = this
         	// Read new file
-	    self.firmwareFileName = self.sel_example.name
+            self.firmwareFileName = self.sel_example.name
             this.displaySelectedFile = true;
-        	readServerFirmwareFile(self.sel_example.filepath)
+            var srcurl = self.sel_example.source.repo_url
+            //var expath = srcurl.substring(0, srcurl.lastIndexOf("/") +1).extend;
+            var expath = srcurl.concat(self.sel_example.filepath)
+        	readServerFirmwareFile(expath)
+        	//readServerFirmwareFile(self.sel_example.filepath)
         	setTimeout(function(){
                 firmwareFile = buffer
         	}, 500)

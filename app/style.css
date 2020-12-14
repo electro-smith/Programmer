@@ -25,7 +25,7 @@ text-align: left;
 
 .app_body {
     color: #fff;
-    background-color: #ffb600;
+    background-color: #ffffff;
 }
 
 
@@ -37,7 +37,7 @@ text-align: left;
     padding: 10px;
     border: solid;
     border-radius: 15px;
-    border-color: #fff;
+    border-color: #ffb600;
     margin: 5px;
 }
 
@@ -47,3 +47,15 @@ text-align: left;
     margin: 20px;
     text-align: left;
 }
+
+.daisystyle {
+    color: #fff;
+    background-color: #343a40;
+    padding: 10px;
+    border: solid;
+    border-radius: 15px;
+    border-color: #ffb600;
+    margin: 5px;
+
+}
+

@@ -3,10 +3,5 @@
         "name": "DaisyExamples", 
         "data_url": "https://raw.githubusercontent.com/electro-smith/DaisyExamples/master/dist/examples.json",
         "repo_url": "https://raw.githubusercontent.com/electro-smith/DaisyExamples/master/"
-    },
-    {
-        "name": "DaisyActionTest",
-        "data_url": "https://raw.githubusercontent.com/stephenhensley/DaisyActionTest/main/dist/examples.json",
-        "repo_url": "https://raw.githubusercontent.com/stephenhensley/DaisyActionTest/main/"
     }
 ]

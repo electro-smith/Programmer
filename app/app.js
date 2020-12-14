@@ -217,39 +217,40 @@ var app = new Vue({
         </div>
         </b-row>
         <b-row align="between">
-        <b-col align="stretch" class="app_column">
-        <b-container>
-            <legend> Program Select/Import </legend>
-            <b-row class="p-2">
-                <legend> Select a platform and a program from the menu below.</legend>
-                <b-form-select placeholder="Platform" v-model="sel_platform" textContent="Select a platform" id="platformSelector">
-                    <template v-slot:first>
-                        <b-form-select-option :value="null" disabled>-- Platform --</b-form-select-option>
-                    </template>
-                    <option v-for="platform in platforms" :value="platform">{{platform}}</option>
-                </b-form-select>
-                <b-form-select v-model="sel_example" id="firmwareSelector" required @change="programChanged">
-                    <template v-slot:first>
-                        <b-form-select-option :value="null" disabled>-- Example --</b-form-select-option>
-                    </template>
-                    <b-form-select-option v-for="example in platformExamples" v-bind:key="example.name" :value="example">{{example.name}}</b-form-select-option>
-                </b-form-select>
-            </b-row>
-            <b-row class="p-2">
-                <legend> Or select a file from your computer</legend>
-                <p>
-                    <b-form-file
-                        id="firmwareFile"
-                        v-model="firmwareFile"
-                        :state="Boolean(firmwareFile)"
-                        placeholder="Choose or drop a file..."
-                        drop-placeholder="Drop file here..."
-                    ></b-form-file>
-                </p>
-            </b-row>
-        </b-container>
-        </b-col>
-        <b-col align="center" cols = "7" class="app_column">
+            <b-col align="center" class="app_column">
+                <b-container>
+                    <legend> Program Select/Import </legend>
+                    <b-row class="p-2">
+                        <legend> Select a platform and a program from the menu below.</legend>
+                        <b-form-select placeholder="Platform" v-model="sel_platform" textContent="Select a platform" id="platformSelector">
+                            <template v-slot:first>
+                                <b-form-select-option :value="null" disabled>-- Platform --</b-form-select-option>
+                            </template>
+                            <option v-for="platform in platforms" :value="platform">{{platform}}</option>
+                        </b-form-select>
+                        <b-form-select v-model="sel_example" id="firmwareSelector" required @change="programChanged">
+                            <template v-slot:first>
+                                <b-form-select-option :value="null" disabled>-- Example --</b-form-select-option>
+                            </template>
+                            <b-form-select-option v-for="example in platformExamples" v-bind:key="example.name" :value="example">{{example.name}}</b-form-select-option>
+                        </b-form-select>
+                    </b-row>
+                    <b-row class="p-2">
+                        <legend> Or select a file from your computer</legend>
+                            <b-form-file
+                                id="firmwareFile"
+                                v-model="firmwareFile"
+                                :state="Boolean(firmwareFile)"
+                                placeholder="Choose or drop a file..."
+                                drop-placeholder="Drop file here..."
+                            ></b-form-file>
+                    </b-row>
+                </b-container>
+            </b-col>
+        </b-row>
+        <b-row>
+        <b-col align="center" class="app_column">
+        <b-container align="center">
             <legend>Programming Section</legend>
             <b-button id="download" variant='es' :disabled="no_device || !sel_example"> Program</b-button>
             <div class="log" id="downloadLog"></div>            
@@ -263,7 +264,7 @@ var app = new Vue({
             <br>
             </div>
             <div><div id = "readme"></div> </div>
-            
+        </b-container>
         </b-col>
         </b-row>
     </b-row>        

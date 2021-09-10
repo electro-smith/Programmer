@@ -1,4 +1,5 @@
 var firmwareFile = null;
+var blinkFirmwareFile = null;
 var device = null;
 (function() {
     'use strict';
@@ -223,6 +224,7 @@ var device = null;
         let detachButton = document.querySelector("#detach");
         let downloadButton = document.querySelector("#download");
         let uploadButton = document.querySelector("#upload");
+        let blinkButton = document.querySelector("#blink");
         let statusDisplay = document.querySelector("#status");
         let infoDisplay = document.querySelector("#usbInfo");
         let dfuDisplay = document.querySelector("#dfuInfo");
@@ -290,6 +292,7 @@ var device = null;
             dfuDisplay.textContent = "";
             detachButton.disabled = true;
             uploadButton.disabled = true;
+            blinkButton.disabled = true;
             downloadButton.disabled = true;
             firmwareFileField.disabled = true;
         }
@@ -335,6 +338,7 @@ var device = null;
                 if (device.settings.alternate.interfaceProtocol == 0x02) {
                     if (!desc.CanUpload) {
                         uploadButton.disabled = true;
+                        blinkButton.disabled = true;
                         dfuseUploadSizeField.disabled = true;
                     }
                     if (!desc.CanDnload) {
@@ -400,12 +404,14 @@ var device = null;
                 // Runtime
                 detachButton.disabled = false;
                 uploadButton.disabled = true;
+                blinkButton.disabled = true;
                 downloadButton.disabled = true;
                 firmwareFileField.disabled = true;
 	    } else {
                 // DFU
                 detachButton.disabled = true;
                 uploadButton.disabled = false;
+                blinkButton.disabled = false;
                 downloadButton.disabled = false;
                 firmwareFileField.disabled = false;
             }
@@ -603,6 +609,51 @@ var device = null;
         //     return false;
         // });
 	
+        blinkButton.addEventListener('click', async function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (!configForm.checkValidity()) {
+                configForm.reportValidity();
+                return false;
+            }
+
+            if (device && blinkFirmwareFile != null) {
+                setLogContext(downloadLog);
+                clearLog(downloadLog);
+                try {
+                    let status = await device.getStatus();
+                    if (status.state == dfu.dfuERROR) {
+                        await device.clearStatus();
+                    }
+                } catch (error) {
+                    device.logWarning("Failed to clear status");
+                }
+                await device.do_download(transferSize, blinkFirmwareFile, manifestationTolerant).then(
+                    () => {
+                        logInfo("Done!");
+                        setLogContext(null);
+                        if (!manifestationTolerant) {
+                            device.waitDisconnected(5000).then(
+                                dev => {
+                                    onDisconnect();
+                                    device = null;
+                                },
+                                error => {
+                                    // It didn't reset and disconnect for some reason...
+                                    console.log("Device unexpectedly tolerated manifestation.");
+                                }
+                            );
+                        }
+                    },
+                    error => {
+                        logError(error);
+                        setLogContext(null);
+                    }
+                )
+            }            
+        });
+
+
         downloadButton.addEventListener('click', async function(event) {
             event.preventDefault();
             event.stopPropagation();

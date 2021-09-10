@@ -17,6 +17,7 @@ var data = {
     sel_platform: null,
     sel_example: null,
     firmwareFile: null,
+    blinkFirmwareFile: null,
     displayImportedFile: false,
     displaySelectedFile: false
 }
@@ -115,12 +116,14 @@ function displayReadMe(fname)
     	.then(text => div.innerHTML = marked(text.replace("404: Not Found", "No additional details available for this example.")));
 }
 
-function readServerFirmwareFile(path)
+function readServerFirmwareFile(path, dispReadme = true)
 {
     var raw = new XMLHttpRequest();
     var fname = path;
 
-    displayReadMe(fname)
+    if(dispReadme){
+        displayReadMe(fname)
+    }
 
     raw.open("GET", fname, true);
     raw.responseType = "arraybuffer"
@@ -221,6 +224,10 @@ var app = new Vue({
                 <b-container>
                     <legend> Program Select/Import </legend>
                     <b-row class="p-2">
+                        <legend>Flash the blink example</legend>
+                        <div><b-button variant="es" id="blink"  :disabled="no_device">Flash Blink!</b-button></div>
+                    </b-row>
+                    <b-row class="p-2">
                         <legend> Select a platform and a program from the menu below.</legend>
                         <b-form-select placeholder="Platform" v-model="sel_platform" textContent="Select a platform" id="platformSelector">
                             <template v-slot:first>
@@ -290,7 +297,6 @@ var app = new Vue({
         //     self.importExamples(buffer)
         // }, 1000)
         this.importExamples()
-            
     },
     methods: {
         importExamples() {
@@ -350,7 +356,6 @@ var app = new Vue({
                 }
             }
             raw.send(null)
-
         },
         programChanged(){
         	var self = this
@@ -386,6 +391,19 @@ var app = new Vue({
                 firmwareFile = reader.result;
             }
             reader.readAsArrayBuffer(newfile);
+        },
+        examples(){
+            var self = this
+            var blink_example = self.examples.filter(example => example.name.toLowerCase() === "blink" && example.platform === "seed")[0]
+
+            // Read new file
+            self.firmwareFileName = blink_example.name
+            var srcurl = blink_example.source.repo_url
+            var expath = srcurl.concat(blink_example.filepath)
+        	readServerFirmwareFile(expath, false)
+        	setTimeout(function(){
+                blinkFirmwareFile = buffer
+        	}, 500)
         }
     }
 })

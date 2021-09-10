@@ -359,8 +359,6 @@ var app = new Vue({
         },
         programChanged(){
         	var self = this
-            console.log(this.sel_platform)
-            console.log(this.sel_example)
 
             // Read new file
             self.firmwareFileName = self.sel_example.name
@@ -415,13 +413,12 @@ var app = new Vue({
             
             var platform = searchParams.get('platform')
             var name = searchParams.get('name')
-            if(platform != null && name != null){
-                //valid platform?
-                if(self.examples.filter(ex => ex.platform === platform)){
-                    //valid example?
+            if(platform != null && self.examples.filter(ex => ex.platform === platform)){
+                self.sel_platform = platform
+
+                if(name != null){
                     var ex = self.examples.filter(ex => ex.name === name && ex.platform === platform)[0]
                     if(ex != null){
-                        self.sel_platform = platform
                         self.sel_example = ex
                         this.programChanged()
                     }    

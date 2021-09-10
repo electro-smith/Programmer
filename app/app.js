@@ -227,6 +227,7 @@ var app = new Vue({
                         <legend>Getting Started? Flash the Blink example!</legend>
                         <div><b-button variant="es" id="blink"  :disabled="no_device">Flash Blink!</b-button></div>
                     </b-row>
+                    <hr>
                     <b-row class="p-2">
                         <legend> Or select a platform and a program from the menu below.</legend>
                         <b-form-select placeholder="Platform" v-model="sel_platform" textContent="Select a platform" id="platformSelector">
@@ -242,6 +243,7 @@ var app = new Vue({
                             <b-form-select-option v-for="example in platformExamples" v-bind:key="example.name" :value="example">{{example.name}}</b-form-select-option>
                         </b-form-select>
                     </b-row>
+                    <hr>
                     <b-row class="p-2">
                         <legend> Or select a file from your computer</legend>
                             <b-form-file

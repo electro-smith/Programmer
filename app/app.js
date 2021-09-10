@@ -225,7 +225,7 @@ var app = new Vue({
                 <b-container>
                     <legend> Program Select/Import </legend>
                     <b-row class="p-2">
-                        <legend>Flash the blink example</legend>
+                        <legend>Getting Started? Flash the Blink example!</legend>
                         <div><b-button variant="es" id="blink"  :disabled="no_device">Flash Blink!</b-button></div>
                     </b-row>
                     <b-row class="p-2">

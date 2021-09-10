@@ -327,6 +327,10 @@ var app = new Vue({
                                 ex_buffer.forEach( function(ex_dat) {
                                     //  Add "source" to example data
                                     ex_dat.source = ex_src
+                                    
+                                    self.examples.sort(function (i1, i2){ 
+                                        return i1.name.toLowerCase() < i2.name.toLowerCase() ? -1 : 1
+                                    })
                                     self.examples.push(ex_dat)
                                 })
                                 unique_platforms.forEach( function(u_plat) {

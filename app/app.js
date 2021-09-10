@@ -188,6 +188,7 @@ var app = new Vue({
                             <li>
                                 <p>Now do either of the following:</p>
                                 <ul>
+                                    <li><p>Flash the blink example</p></li>
                                     <li><p>Select a platform and an example from the drop down menu (descriptions, diagrams, etc. coming soon)</p></li>
                                     <li><p>Click the Choose File button, and select the .bin file you would like to flash. This can be found in a projects "build" folder.</p></li>
                                 </ul>
@@ -228,7 +229,7 @@ var app = new Vue({
                         <div><b-button variant="es" id="blink"  :disabled="no_device">Flash Blink!</b-button></div>
                     </b-row>
                     <b-row class="p-2">
-                        <legend> Select a platform and a program from the menu below.</legend>
+                        <legend> Or select a platform and a program from the menu below.</legend>
                         <b-form-select placeholder="Platform" v-model="sel_platform" textContent="Select a platform" id="platformSelector">
                             <template v-slot:first>
                                 <b-form-select-option :value="null" disabled>-- Platform --</b-form-select-option>

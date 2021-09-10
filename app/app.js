@@ -307,14 +307,14 @@ var app = new Vue({
             // New code below:
             // Get Source list as data 
             var self = this // assign self to 'this' before nested function calls...
-            var src_url = getRootUrl().concat("data/sources.json") 
+            var src_url = getRootUrl().split("?")[0].concat("data/sources.json") //need to strip out query string
             var raw = new XMLHttpRequest();
             raw.open("GET", src_url, true);
             raw.responseType = "text"
             raw.onreadystatechange = function ()
             {
                 if (this.readyState === 4 && this.status === 200) {
-                    var obj = this.response; 
+                    var obj = this.response;
                     buffer = JSON.parse(obj);
                     buffer.forEach( function(ex_src) {
                         // Launch another request with async function to load examples from the 
@@ -359,7 +359,10 @@ var app = new Vue({
         },
         programChanged(){
         	var self = this
-        	// Read new file
+            console.log(this.sel_platform)
+            console.log(this.sel_example)
+
+            // Read new file
             self.firmwareFileName = self.sel_example.name
             this.displaySelectedFile = true;
             var srcurl = self.sel_example.source.repo_url
@@ -394,6 +397,8 @@ var app = new Vue({
         },
         examples(){
             var self = this
+
+            //grab the blink firmware file
             var blink_example = self.examples.filter(example => example.name.toLowerCase() === "blink" && example.platform === "seed")[0]
 
             // Read new file
@@ -404,6 +409,24 @@ var app = new Vue({
         	setTimeout(function(){
                 blinkFirmwareFile = buffer
         	}, 500)
+
+            //parse the query strings
+            var searchParams = new URLSearchParams(getRootUrl().split("?")[1])
+            
+            var platform = searchParams.get('platform')
+            var name = searchParams.get('name')
+            if(platform != null && name != null){
+                //valid platform?
+                if(self.examples.filter(ex => ex.platform === platform)){
+                    //valid example?
+                    var ex = self.examples.filter(ex => ex.name === name && ex.platform === platform)[0]
+                    if(ex != null){
+                        self.sel_platform = platform
+                        self.sel_example = ex
+                        this.programChanged()
+                    }    
+                }
+            }
         }
     }
 })

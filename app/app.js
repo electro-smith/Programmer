@@ -223,7 +223,6 @@ var app = new Vue({
         <b-row align="between">
             <b-col align="center" class="app_column">
                 <b-container>
-                    <legend> Program Select/Import </legend>
                     <b-row class="p-2">
                         <legend>Getting Started? Flash the Blink example!</legend>
                         <div><b-button variant="es" id="blink"  :disabled="no_device">Flash Blink!</b-button></div>

@@ -17,6 +17,7 @@ var data = {
     sel_platform: null,
     sel_example: null,
     firmwareFile: null,
+    blinkFirmwareFile: null,
     displayImportedFile: false,
     displaySelectedFile: false
 }
@@ -115,12 +116,14 @@ function displayReadMe(fname)
     	.then(text => div.innerHTML = marked(text.replace("404: Not Found", "No additional details available for this example.")));
 }
 
-function readServerFirmwareFile(path)
+function readServerFirmwareFile(path, dispReadme = true)
 {
     var raw = new XMLHttpRequest();
     var fname = path;
 
-    displayReadMe(fname)
+    if(dispReadme){
+        displayReadMe(fname)
+    }
 
     raw.open("GET", fname, true);
     raw.responseType = "arraybuffer"
@@ -185,6 +188,7 @@ var app = new Vue({
                             <li>
                                 <p>Now do either of the following:</p>
                                 <ul>
+                                    <li><p>Flash the blink example</p></li>
                                     <li><p>Select a platform and an example from the drop down menu (descriptions, diagrams, etc. coming soon)</p></li>
                                     <li><p>Click the Choose File button, and select the .bin file you would like to flash. This can be found in a projects "build" folder.</p></li>
                                 </ul>
@@ -219,9 +223,13 @@ var app = new Vue({
         <b-row align="between">
             <b-col align="center" class="app_column">
                 <b-container>
-                    <legend> Program Select/Import </legend>
                     <b-row class="p-2">
-                        <legend> Select a platform and a program from the menu below.</legend>
+                        <legend>Getting Started? Flash the Blink example!</legend>
+                        <div><b-button variant="es" id="blink"  :disabled="no_device">Flash Blink!</b-button></div>
+                    </b-row>
+                    <hr>
+                    <b-row class="p-2">
+                        <legend> Or select a platform and a program from the menu below.</legend>
                         <b-form-select placeholder="Platform" v-model="sel_platform" textContent="Select a platform" id="platformSelector">
                             <template v-slot:first>
                                 <b-form-select-option :value="null" disabled>-- Platform --</b-form-select-option>
@@ -235,6 +243,7 @@ var app = new Vue({
                             <b-form-select-option v-for="example in platformExamples" v-bind:key="example.name" :value="example">{{example.name}}</b-form-select-option>
                         </b-form-select>
                     </b-row>
+                    <hr>
                     <b-row class="p-2">
                         <legend> Or select a file from your computer</legend>
                             <b-form-file
@@ -290,7 +299,6 @@ var app = new Vue({
         //     self.importExamples(buffer)
         // }, 1000)
         this.importExamples()
-            
     },
     methods: {
         importExamples() {
@@ -301,14 +309,14 @@ var app = new Vue({
             // New code below:
             // Get Source list as data 
             var self = this // assign self to 'this' before nested function calls...
-            var src_url = getRootUrl().concat("data/sources.json") 
+            var src_url = getRootUrl().split("?")[0].concat("data/sources.json") //need to strip out query string
             var raw = new XMLHttpRequest();
             raw.open("GET", src_url, true);
             raw.responseType = "text"
             raw.onreadystatechange = function ()
             {
                 if (this.readyState === 4 && this.status === 200) {
-                    var obj = this.response; 
+                    var obj = this.response;
                     buffer = JSON.parse(obj);
                     buffer.forEach( function(ex_src) {
                         // Launch another request with async function to load examples from the 
@@ -327,6 +335,10 @@ var app = new Vue({
                                 ex_buffer.forEach( function(ex_dat) {
                                     //  Add "source" to example data
                                     ex_dat.source = ex_src
+                                    
+                                    self.examples.sort(function (i1, i2){ 
+                                        return i1.name.toLowerCase() < i2.name.toLowerCase() ? -1 : 1
+                                    })
                                     self.examples.push(ex_dat)
                                 })
                                 unique_platforms.forEach( function(u_plat) {
@@ -346,11 +358,11 @@ var app = new Vue({
                 }
             }
             raw.send(null)
-
         },
         programChanged(){
         	var self = this
-        	// Read new file
+
+            // Read new file
             self.firmwareFileName = self.sel_example.name
             this.displaySelectedFile = true;
             var srcurl = self.sel_example.source.repo_url
@@ -382,6 +394,38 @@ var app = new Vue({
                 firmwareFile = reader.result;
             }
             reader.readAsArrayBuffer(newfile);
+        },
+        examples(){
+            var self = this
+
+            //grab the blink firmware file
+            var blink_example = self.examples.filter(example => example.name.toLowerCase() === "blink" && example.platform === "seed")[0]
+
+            // Read new file
+            self.firmwareFileName = blink_example.name
+            var srcurl = blink_example.source.repo_url
+            var expath = srcurl.concat(blink_example.filepath)
+        	readServerFirmwareFile(expath, false)
+        	setTimeout(function(){
+                blinkFirmwareFile = buffer
+        	}, 500)
+
+            //parse the query strings
+            var searchParams = new URLSearchParams(getRootUrl().split("?")[1])
+            
+            var platform = searchParams.get('platform')
+            var name = searchParams.get('name')
+            if(platform != null && self.examples.filter(ex => ex.platform === platform)){
+                self.sel_platform = platform
+
+                if(name != null){
+                    var ex = self.examples.filter(ex => ex.name === name && ex.platform === platform)[0]
+                    if(ex != null){
+                        self.sel_example = ex
+                        this.programChanged()
+                    }    
+                }
+            }
         }
     }
 })

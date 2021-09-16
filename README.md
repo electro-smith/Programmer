@@ -25,3 +25,7 @@ However, it is recommended that you run this script from one level outside of th
 
 The run script will start the server at `https://localhost:9001/`
 
+With the server started you can access the local version of the programmer at:
+
+[https://localhost:9001/Programmer](https://localhost:9001/Programmer)
+

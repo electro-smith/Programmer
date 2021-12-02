@@ -113,7 +113,7 @@ function displayReadMe(fname)
     
     fetch(url)
 	.then(response => response.text())
-    	.then(text => div.innerHTML = marked(text.replace("404: Not Found", "No additional details available for this example.")));
+    	.then(text => div.innerHTML = marked.parse(text.replace("404: Not Found", "No additional details available for this example.")));
 }
 
 function readServerFirmwareFile(path, dispReadme = true)

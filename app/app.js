@@ -18,6 +18,7 @@ var data = {
     sel_example: null,
     firmwareFile: null,
     blinkFirmwareFile: null,
+    bootloaderFirmwareFile: null,
     displayImportedFile: false,
     displaySelectedFile: false
 }
@@ -262,6 +263,13 @@ var app = new Vue({
         <b-container align="center">
             <legend>Programming Section</legend>
             <b-button id="download" variant='es' :disabled="no_device || !sel_example"> Program</b-button>
+
+            <br> <br>
+            <b-button variant="es" v-b-toggle.collapseAdvanced>Advanced...</b-button>
+            <b-collapse id="collapseAdvanced">
+                <br> <div> <b-button variant="es" id="bootloader"  :disabled="no_device">Flash Bootloader Image</b-button> </div>                        
+            </b-collapse>
+
             <div class="log" id="downloadLog"></div>            
             <br><br>
             <div v-if="sel_example||firmwareFile" >            
@@ -408,6 +416,13 @@ var app = new Vue({
         	readServerFirmwareFile(expath, false)
         	setTimeout(function(){
                 blinkFirmwareFile = buffer
+        	}, 500)
+
+            // grab the bootloader firmware file
+            var srcurl = blink_example.source.bootloader_url
+        	readServerFirmwareFile(srcurl, false)
+        	setTimeout(function(){
+                bootloaderFirmwareFile = buffer
         	}, 500)
 
             //parse the query strings

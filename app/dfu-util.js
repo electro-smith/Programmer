@@ -429,6 +429,8 @@ var device = null;
                 dfuseUploadSizeField.disabled = false;
                 let segment = device.getFirstWritableSegment();
                 if (segment) {
+                    if(segment.start === 0x90000000)
+                        segment.start += 0x40000
                     device.startAddress = segment.start;
                     dfuseStartAddressField.value = "0x" + segment.start.toString(16);
                     const maxReadSize = device.getMaxReadSize(segment.start);

@@ -24,7 +24,6 @@ var data = {
 }
 
 // Global Buffer for reading files
-var buffer
 var ex_buffer
 
 // Gets the root url
@@ -117,25 +116,27 @@ function displayReadMe(fname)
     	.then(text => div.innerHTML = marked.parse(text.replace("404: Not Found", "No additional details available for this example.")));
 }
 
-function readServerFirmwareFile(path, dispReadme = true)
+async function readServerFirmwareFile(path, dispReadme = true)
 {
-    var raw = new XMLHttpRequest();
-    var fname = path;
-
-    if(dispReadme){
-        displayReadMe(fname)
-    }
-
-    raw.open("GET", fname, true);
-    raw.responseType = "arraybuffer"
-    raw.onreadystatechange = function ()
-    {
-        if (this.readyState === 4 && this.status === 200) {
-            var obj = this.response; 
-            buffer = obj
+    return new Promise((resolve) => {
+        var buffer
+        var raw = new XMLHttpRequest();
+        var fname = path;
+    
+        if(dispReadme){
+            displayReadMe(fname)
         }
-    }
-    raw.send(null)
+    
+        raw.open("GET", fname, true);
+        raw.responseType = "arraybuffer"
+        raw.onreadystatechange = function ()
+        {
+            if (this.readyState === 4 && this.status === 200) {
+                resolve(this.response)
+            }    
+        }
+        raw.send(null)
+    })
 }
 
 var app = new Vue({
@@ -376,11 +377,9 @@ var app = new Vue({
             var srcurl = self.sel_example.source.repo_url
             //var expath = srcurl.substring(0, srcurl.lastIndexOf("/") +1).extend;
             var expath = srcurl.concat(self.sel_example.filepath)
-        	readServerFirmwareFile(expath)
-        	//readServerFirmwareFile(self.sel_example.filepath)
-        	setTimeout(function(){
+        	readServerFirmwareFile(expath).then(buffer => {
                 firmwareFile = buffer
-        	}, 500)
+            })
         },
     },
     watch: {
@@ -413,17 +412,15 @@ var app = new Vue({
             self.firmwareFileName = blink_example.name
             var srcurl = blink_example.source.repo_url
             var expath = srcurl.concat(blink_example.filepath)
-        	readServerFirmwareFile(expath, false)
-        	setTimeout(function(){
+        	readServerFirmwareFile(expath, false).then(buffer => {
                 blinkFirmwareFile = buffer
-        	}, 500)
+            })
 
             // grab the bootloader firmware file
             var srcurl = blink_example.source.bootloader_url
-        	readServerFirmwareFile(srcurl, false)
-        	setTimeout(function(){
+        	readServerFirmwareFile(srcurl, false).then(buffer => {
                 bootloaderFirmwareFile = buffer
-        	}, 500)
+            })
 
             //parse the query strings
             var searchParams = new URLSearchParams(getRootUrl().split("?")[1])
